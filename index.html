@@ -48,20 +48,28 @@
 html,body{ margin:0; padding:0; }
 body{
   font-family:var(--sans);
-  background:var(--paper);
   color:var(--ink);
   -webkit-font-smoothing:antialiased;
   font-size:15px;
   line-height:1.6;
+  /* 현재 단원 색이 배경에 아주 옅게 번집니다 */
+  background:
+    radial-gradient(58rem 30rem at 92% -6%, color-mix(in srgb, var(--u) 22%, transparent) 0%, transparent 64%),
+    radial-gradient(46rem 26rem at 2% 4%, color-mix(in srgb, var(--u) 13%, transparent) 0%, transparent 58%),
+    linear-gradient(180deg, #FBFCFE 0%, var(--paper) 42%, #EAEFF6 100%);
+  background-repeat:no-repeat;
+  min-height:100vh;
+  transition:background .35s ease;
 }
 button{ font-family:inherit; cursor:pointer; }
 button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible{
   outline:2px solid var(--ink-2); outline-offset:2px;
 }
 .mono{ font-family:var(--mono); font-variant-numeric:tabular-nums; }
+/* 한글을 모노 폰트로 쓰면 흐릿하게 렌더링됩니다. 라벨은 본문 서체로. */
 .eyebrow{
-  font-family:var(--mono); font-size:11px; font-weight:600;
-  letter-spacing:.1em; text-transform:uppercase; color:var(--muted-2);
+  font-family:var(--sans); font-size:12.5px; font-weight:700;
+  letter-spacing:.02em; color:#5A6D85;
 }
 .eyebrow.tinted{ color:var(--u); }
 .hidden{ display:none !important; }
@@ -75,17 +83,17 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:fo
 }
 .gate-card{ width:100%; max-width:420px; color:#fff; text-align:left; }
 .gate-mark{
-  font-family:var(--mono); font-size:11px; letter-spacing:.2em;
-  color:#7E9AC4; margin-bottom:28px;
+  font-size:13.5px; font-weight:700; letter-spacing:.02em;
+  color:#8FB0DA; margin-bottom:26px;
 }
 .gate-card h1{
   font-size:30px; font-weight:800; letter-spacing:-.03em;
   margin:0 0 14px; line-height:1.25;
 }
-.gate-card p{ color:#A9BCD6; font-size:14px; margin:0 0 28px; }
+.gate-card p{ color:#B6C9E2; font-size:15.5px; margin:0 0 28px; line-height:1.6; }
 .gate-card label{
-  display:block; font-family:var(--mono); font-size:10px;
-  letter-spacing:.14em; color:#7E9AC4; margin-bottom:8px; text-transform:uppercase;
+  display:block; font-size:13px; font-weight:700;
+  color:#A9C2E4; margin-bottom:8px;
 }
 .gate-card input{
   width:100%; padding:13px 14px; font-size:15px; font-family:inherit;
@@ -97,7 +105,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:fo
   width:100%; margin-top:14px; padding:13px; font-size:15px; font-weight:700;
   background:#fff; color:var(--ink); border:0; border-radius:var(--r);
 }
-.gate-note{ font-size:12px; color:#7E9AC4; margin-top:18px; line-height:1.6; }
+.gate-note{ font-size:13.5px; color:#A2B8D6; margin-top:18px; line-height:1.7; }
 .gate-err{ min-height:0; margin-top:12px; }
 .gate-err:not(:empty){
   background:rgba(196,70,60,.16); border:1px solid rgba(240,169,162,.45);
@@ -109,8 +117,10 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:fo
 
 /* ---------- 상단바 ---------- */
 .topbar{
-  position:sticky; top:0; z-index:30; background:var(--ink); color:#fff;
-  display:flex; align-items:center; gap:16px; padding:0 20px; height:56px;
+  position:sticky; top:0; z-index:30; color:#fff;
+  display:flex; align-items:center; gap:14px; padding:0 20px; height:60px;
+  background:linear-gradient(100deg, var(--ink) 0%, #16294A 58%, color-mix(in srgb, var(--u) 42%, #16294A) 100%);
+  border-bottom:3px solid var(--u);
 }
 .topbar .brand{ font-size:14px; font-weight:700; letter-spacing:-.01em; }
 .topbar .brand span{ color:#7E9AC4; font-weight:500; }
@@ -121,7 +131,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:fo
   background:rgba(255,255,255,.12); border-radius:100px; white-space:nowrap;
 }
 .chip b{ font-size:14px; font-weight:700; }
-.chip i{ font-style:normal; color:#A6BEDD; font-size:10.5px; letter-spacing:.08em; }
+.chip i{ font-family:var(--sans); font-style:normal; color:#B9CEE8; font-size:12px; font-weight:600; }
 .topbar .who{ font-size:14px; color:#D6E2F0; font-weight:500; }
 .ghost-btn{
   background:transparent; border:1px solid rgba(255,255,255,.28);
@@ -137,10 +147,17 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:fo
   .cols > #stage{ order:1; }
 }
 /* 좁은 화면에서는 상단바를 이름·정확도까지 다 밀어넣지 않습니다 */
-@media (max-width:640px){
-  .topbar{ padding:0 14px; gap:8px; }
+@media (max-width:720px){
+  .topbar{ padding:0 13px; gap:8px; height:56px; flex-wrap:nowrap; }
+  .topbar .brand{ font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .topbar .brand span{ display:none; }
   .topbar .who, .topbar .chip.opt{ display:none; }
-  .wrap{ padding:18px 14px 64px; }
+  .ghost-btn{ white-space:nowrap; padding:6px 10px; }
+  .wrap{ padding:16px 14px 64px; }
+}
+@media (max-width:420px){
+  .topbar .chip{ padding:5px 9px; font-size:12px; }
+  .topbar .chip i{ display:none; }
 }
 
 .panel{
@@ -154,10 +171,40 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:fo
 }
 
 /* ---------- 통계 ---------- */
-.stat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:2px; background:var(--line); border-radius:var(--r); overflow:hidden; }
-.stat{ background:var(--card); padding:12px 13px; }
+
+
+/* 내 기록 */
+.me-panel{ border-top:3px solid var(--u); }
+.me-head{ display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+.me-face{
+  flex:none; width:52px; height:52px; border-radius:16px; display:grid; place-items:center;
+  background:#EEF2F8; background:color-mix(in srgb, var(--u) 14%, white);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--u) 22%, white);
+}
+.me-face .avatar{ display:block; }
+.me-id{ display:flex; flex-direction:column; min-width:0; }
+.me-name{ font-size:17px; font-weight:800; letter-spacing:-.03em; }
+.me-animal{ font-size:12.5px; color:var(--muted); font-weight:600; margin-top:1px; }
+.tb-face{ flex:none; display:grid; place-items:center; width:30px; height:30px; }
+
+/* 지표 4칸 — 각기 다른 색으로 구분 */
+.stat-grid{
+  display:grid; grid-template-columns:1fr 1fr; gap:9px;
+  background:none; border-radius:0; overflow:visible;
+}
+.stat{
+  padding:11px 12px; border-radius:12px; border:1px solid transparent;
+}
 .stat .v{ font-family:var(--mono); font-size:23px; font-weight:700; letter-spacing:-.03em; }
-.stat .k{ font-size:12px; color:var(--muted); margin-top:2px; }
+.stat .k{ font-size:12.5px; font-weight:600; margin-top:2px; }
+.stat.s-xp{     background:#EAF2FB; border-color:#C6DCF3; }
+.stat.s-xp .v{ color:#17548F; } .stat.s-xp .k{ color:#3D6E9F; }
+.stat.s-done{   background:#EAF6EF; border-color:#C2E4D0; }
+.stat.s-done .v{ color:#1B6B42; } .stat.s-done .k{ color:#3C8060; }
+.stat.s-streak{ background:#FDF0E7; border-color:#F3D3BC; }
+.stat.s-streak .v{ color:#A9541A; } .stat.s-streak .k{ color:#96603A; }
+.stat.s-acc{    background:#F2EDFA; border-color:#D9CDEF; }
+.stat.s-acc .v{ color:#5A3E9E; } .stat.s-acc .k{ color:#6D579C; }
 
 /* ---------- 단원 목록 ---------- */
 .unit-list{ display:flex; flex-direction:column; gap:8px; }
@@ -180,7 +227,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:fo
 }
 .unit-btn .nm{ font-size:15px; font-weight:600; flex:1; letter-spacing:-.02em; line-height:1.3; }
 .unit-btn .qn{ font-family:var(--mono); font-size:12px; color:var(--muted-2); font-weight:600; }
-.unit-btn .sub{ font-size:12.5px; color:var(--muted); margin-top:4px; }
+.unit-btn .sub{ font-size:13.5px; color:var(--muted); margin-top:4px; font-weight:500; }
 
 /* 진도 바 */
 .bar{ height:5px; background:#E7ECF3; border-radius:100px; margin-top:9px; overflow:hidden; }
@@ -239,11 +286,11 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:fo
 .runner-bar .mode-tag.prac{ background:var(--u); }
 .runner.check-mode .runner-bar{ background:var(--check-bg); border-bottom-color:#EBDCBE; }
 .runner-bar .mode-tag{
-  font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:.12em;
-  padding:4px 9px; border-radius:100px; background:var(--ink); color:#fff;
+  font-family:var(--sans); font-size:12.5px; font-weight:700; letter-spacing:-.01em;
+  padding:5px 11px; border-radius:100px; background:var(--ink); color:#fff;
 }
 .runner.check-mode .runner-bar .mode-tag{ background:var(--check); }
-.runner-bar .pos{ font-family:var(--mono); font-size:13px; font-weight:600; color:var(--muted); }
+.runner-bar .pos{ font-family:var(--mono); font-size:14px; font-weight:700; color:var(--ink-2); }
 .runner-bar .spacer{ flex:1; }
 .hearts{ font-size:15px; letter-spacing:2px; }
 .runner-body{ padding:22px 18px 20px; }
@@ -329,7 +376,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:fo
 }
 .rubric .eyebrow{ display:block; margin-bottom:7px; }
 .rubric ul{ margin:0; padding-left:17px; font-size:12.5px; color:var(--muted); }
-.counter{ font-family:var(--mono); font-size:11px; color:var(--muted-2); margin-top:6px; text-align:right; }
+.counter{ font-family:var(--mono); font-size:13px; font-weight:600; color:var(--muted); margin-top:7px; text-align:right; }
 
 /* 시그니처: 판단 스펙트럼 */
 .spectrum{ margin-top:20px; padding-top:18px; border-top:1px solid var(--line); }
@@ -345,7 +392,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:fo
   width:11px; height:11px; border-radius:50%; margin:11px auto 0;
   border:2.5px solid var(--card); box-shadow:0 0 0 1.5px currentColor;
 }
-.spec-mark .lb{ font-family:var(--mono); font-size:9.5px; letter-spacing:.06em; margin-top:3px; display:block; }
+.spec-mark .lb{ font-family:var(--sans); font-size:12px; font-weight:700; margin-top:4px; display:block; }
 .spec-mark.me{ color:var(--ink); }
 .spec-mark.me .dot{ background:var(--ink); }
 .spec-mark.best{ color:var(--s3); }
@@ -361,7 +408,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:fo
   padding-top:16px; border-top:1px solid var(--line); flex-wrap:wrap;
 }
 .foot .spacer{ flex:1; }
-.foot .note{ font-size:13px; color:var(--muted); }
+.foot .note{ font-size:13.5px; color:var(--muted); }
 
 /* ---------- 세션 종료 ---------- */
 .done-wrap{ text-align:left; }
@@ -377,8 +424,108 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:fo
 .tagrow .nm{ font-size:14px; font-weight:500; width:150px; flex:none; }
 .tagrow .tr{ flex:1; height:6px; background:var(--line); border-radius:100px; overflow:hidden; }
 .tagrow .tr > i{ display:block; height:100%; border-radius:100px; }
-.tagrow .pc{ font-family:var(--mono); font-size:11.5px; color:var(--muted); width:38px; text-align:right; flex:none; }
+.tagrow .pc{ font-family:var(--mono); font-size:13px; font-weight:700; color:var(--ink); width:42px; text-align:right; flex:none; }
 @media (max-width:520px){ .tagrow .nm{ width:100px; font-size:12px; } }
+
+
+/* 성찰 단원 */
+.rlist{ margin-top:18px; border:1px solid var(--line); border-radius:var(--r); overflow:hidden; }
+.rrow{ display:flex; align-items:center; gap:12px; padding:13px 15px; background:var(--card); }
+.rrow + .rrow{ border-top:1px solid var(--line); }
+.rnum{
+  flex:none; width:24px; height:24px; border-radius:50%; font-size:12px; font-weight:700;
+  display:grid; place-items:center; color:#fff; background:var(--u);
+}
+.rq{ flex:1; font-size:15px; font-weight:500; letter-spacing:-.015em; }
+.rstate{ flex:none; font-family:var(--sans); font-size:13px; font-weight:700; }
+.rstate.none{ color:var(--muted-2); }
+.rstate.done{ color:var(--u); }
+
+.think{
+  border:1px solid color-mix(in srgb, var(--u) 30%, white);
+  background:color-mix(in srgb, var(--u) 5%, white);
+  border-radius:var(--r); padding:13px 16px; margin-bottom:16px;
+}
+.think .eyebrow{ display:block; color:var(--u); margin-bottom:7px; }
+.think ul{ margin:0; padding-left:18px; }
+.think li{ font-size:14px; color:var(--ink); line-height:1.65; }
+.think li + li{ margin-top:5px; }
+
+details.prev{
+  border:1px solid var(--line); border-radius:var(--r-sm);
+  background:#F8FAFC; margin-bottom:12px;
+}
+details.prev summary{
+  cursor:pointer; padding:10px 13px; font-size:13.5px; font-weight:600; color:var(--ink-2);
+}
+details.prev[open] summary{ border-bottom:1px solid var(--line); }
+.prevbody{ padding:12px 14px; font-size:14px; line-height:1.7; white-space:pre-wrap; color:var(--muted); }
+.dim{ color:var(--muted-2); font-weight:400; }
+
+.rcards{ display:flex; flex-direction:column; gap:14px; }
+.rcard{ display:flex; gap:12px; border:1px solid var(--line); border-radius:var(--r); padding:15px; }
+.rcard.empty-card{ border-style:dashed; }
+.rcbody{ flex:1; min-width:0; }
+.rcq{ font-size:16px; font-weight:700; letter-spacing:-.02em; margin-bottom:9px; }
+.rclatest .eyebrow{ display:block; margin-bottom:5px; }
+.rctext{
+  font-size:15px; line-height:1.75; white-space:pre-wrap;
+  border-left:3px solid var(--u); padding:2px 0 2px 13px; margin-bottom:12px;
+}
+.rcnone{ margin:0; font-size:14px; color:var(--muted-2); }
+
+
+/* 지표 계산 기록 */
+.wformula{
+  font-size:13.5px; color:var(--muted); margin-top:5px; letter-spacing:-.01em; line-height:1.5;
+}
+.wval{
+  flex:none; font-size:17px; font-weight:700; color:var(--u); text-align:right;
+}
+.wround{
+  display:block; font-family:var(--sans); font-size:12px; font-weight:700; color:var(--muted);
+}
+.wcalc{
+  border:1px solid color-mix(in srgb, var(--u) 30%, white);
+  background:color-mix(in srgb, var(--u) 5%, white);
+  border-radius:var(--r); padding:14px 16px; margin-bottom:18px;
+}
+.wcalc .eyebrow{ display:block; color:var(--u); margin-bottom:7px; }
+.wcalc-f{ font-size:16px; font-weight:700; letter-spacing:-.01em; line-height:1.5; }
+.wcalc-w{ font-size:13.5px; color:var(--muted); margin-top:9px; line-height:1.6; }
+
+.winputs{
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr));
+  gap:12px; margin-bottom:16px;
+}
+@media (max-width:620px){ .winputs{ grid-template-columns:1fr; } }
+.wfield{ display:flex; flex-direction:column; }
+.wlabel{ font-size:14px; font-weight:700; letter-spacing:-.01em; }
+.whint{ font-size:12.5px; color:var(--muted); margin-top:3px; line-height:1.5; }
+.wfield input{
+  margin-top:8px; padding:13px 14px; font-family:var(--mono); font-size:18px; font-weight:600;
+  border:2px solid var(--line-2); border-radius:var(--r); background:var(--card); color:var(--ink);
+}
+.wfield input:focus{ border-color:var(--u); }
+
+.wresult{
+  border:1px solid var(--line); border-radius:var(--r); padding:14px 16px;
+  background:#F8FAFC; margin-bottom:18px;
+}
+.wresult .eyebrow{ display:block; margin-bottom:5px; }
+.wbig{ font-size:34px; font-weight:700; letter-spacing:-.04em; line-height:1.1; color:var(--u); }
+.wnote{ font-family:var(--mono); font-size:12.5px; color:var(--muted); margin-top:5px; }
+
+.memo-block{ margin-bottom:6px; }
+.memo-block .eyebrow{ display:block; margin-bottom:7px; }
+
+.wsum{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+.wsum .wbig{ font-size:27px; }
+.wsum-x{ font-size:13px; color:var(--muted); }
+.wsum .wround{ display:inline; }
+.wprev{ font-size:13.5px; margin-bottom:9px; }
+.wprev b{ color:var(--ink); }
+.wprevmemo{ color:var(--muted); margin-top:3px; white-space:pre-wrap; line-height:1.6; }
 
 /* 알림 */
 .notice{
@@ -405,7 +552,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:fo
 /* 개발자 검증 패널 */
 #devPanel{ margin-top:18px; }
 #devPanel pre{
-  font-family:var(--mono); font-size:11px; line-height:1.6; background:var(--ink);
+  font-family:var(--mono); font-size:12.5px; line-height:1.7; background:var(--ink);
   color:#C9DCF2; padding:14px; border-radius:var(--r); overflow-x:auto; margin:0;
 }
 .toast{
@@ -442,6 +589,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:fo
     <div class="chip mono"><i>연속</i><b id="tbStreak">0</b></div>
     <div class="chip mono opt"><i>정확도</i><b id="tbAcc">—</b></div>
     <span class="who" id="tbWho"></span>
+    <span class="tb-face" id="tbFace"></span>
     <button class="ghost-btn" id="logoutBtn">나가기</button>
   </header>
 
@@ -449,19 +597,25 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:fo
     <div class="cols">
       <!-- 좌측 레일 -->
       <aside>
+        <div class="panel me-panel">
+          <div class="me-head">
+            <span class="me-face" id="meFace"></span>
+            <div class="me-id">
+              <span class="me-name" id="meName"></span>
+              <span class="me-animal" id="meAnimal"></span>
+            </div>
+          </div>
+          <div class="stat-grid">
+            <div class="stat s-xp"><div class="v mono" id="stXp">0</div><div class="k">XP</div></div>
+            <div class="stat s-done"><div class="v mono" id="stDone">0</div><div class="k">푼 문항</div></div>
+            <div class="stat s-streak"><div class="v mono" id="stStreak">0</div><div class="k">연속 학습일</div></div>
+            <div class="stat s-acc"><div class="v mono" id="stAcc">—</div><div class="k">평균 획득률</div></div>
+          </div>
+          <button class="btn quiet sm" id="reviewBtn" style="width:100%;margin-top:13px">복습함 (0)</button>
+        </div>
         <div class="panel">
           <div class="panel-h"><span class="eyebrow">학습 단원</span></div>
           <div class="unit-list" id="unitList"></div>
-        </div>
-        <div class="panel">
-          <div class="panel-h"><span class="eyebrow">내 기록</span></div>
-          <div class="stat-grid">
-            <div class="stat"><div class="v mono" id="stXp">0</div><div class="k">XP</div></div>
-            <div class="stat"><div class="v mono" id="stDone">0</div><div class="k">푼 문항</div></div>
-            <div class="stat"><div class="v mono" id="stStreak">0</div><div class="k">연속 학습일</div></div>
-            <div class="stat"><div class="v mono" id="stAcc">—</div><div class="k">평균 획득률</div></div>
-          </div>
-          <button class="btn quiet sm" id="reviewBtn" style="width:100%;margin-top:12px">복습함 (0)</button>
         </div>
       </aside>
 
@@ -547,7 +701,10 @@ function blankState(name) {
     name, xp: 0, streak: 0, lastDay: null,
     practice: {},   // qid -> { best, max, tries }
     check: {},      // unitId -> { submittedAt, elapsedSec, items:[...], auto:{got,max}, manual:[...] }
-    review: []      // qid 목록
+    review: [],     // qid 목록
+    reflect: {},    // qid -> [{ text, at }, ...]  회차별 기록
+    work: {},       // qid -> [{ a, b, value, memo, at }, ...]
+    sent: {}        // unitId -> 제출 시각
   };
 }
 
@@ -566,11 +723,11 @@ function bumpStreak() {
    ========================================================================== */
 const CHOICE_TYPES = ['knowledge', 'situation'];
 const FREE_TYPES = ['mission', 'essay'];
-const ALL_TYPES = [...CHOICE_TYPES, 'number', ...FREE_TYPES];
+const ALL_TYPES = [...CHOICE_TYPES, 'number', ...FREE_TYPES, 'reflect', 'worksheet'];
 
 const TYPE_LABEL = {
   knowledge: '지식 확인', number: '숫자 해석', situation: '상황 판단',
-  mission: '미션', essay: '서술'
+  mission: '미션', essay: '서술', reflect: '성찰', worksheet: '계산 기록'
 };
 
 async function loadBank() {
@@ -610,6 +767,17 @@ async function loadBank() {
       if (!q.accept || typeof q.accept.value !== 'number') { err('accept.value 필요'); return; }
       q.accept.tolerance = Number(q.accept.tolerance) || 0;
       q.maxScore = Number(q.maxScore) || 1;
+    } else if (q.type === 'reflect') {
+      q.maxScore = 0;                          // 채점하지 않음
+      q.think = Array.isArray(q.think) ? q.think : [];
+      q.placeholder = q.placeholder || '떠오르는 대로 적어보세요';
+    } else if (q.type === 'worksheet') {
+      q.maxScore = 0;
+      if (!Array.isArray(q.inputs) || q.inputs.length < 2) { err('inputs 2개 이상 필요'); return; }
+      if (['ratio', 'sumRatio', 'sum2Ratio'].indexOf(q.calc) === -1) {
+        err('calc 는 ratio · sumRatio · sum2Ratio 중 하나'); return;
+      }
+      if (q.calc === 'sum2Ratio' && q.inputs.length < 3) { err('sum2Ratio 는 inputs 3개 필요'); return; }
     } else {
       q.maxScore = Number(q.maxScore) || 0;   // 사람이 채점
       q.autoScored = false;
@@ -623,7 +791,59 @@ async function loadBank() {
 const qOfUnit = (unitId, mode) =>
   BANK.questions.filter(q => q.unit === unitId && q.modes.includes(mode));
 
-const isAuto = q => q.type !== 'mission' && q.type !== 'essay';
+const NO_SCORE = ['mission', 'essay', 'reflect', 'worksheet'];
+const isAuto = q => NO_SCORE.indexOf(q.type) === -1;
+
+/* 성찰 단원 = 그 단원의 문항이 모두 reflect 타입 */
+const reflectQs = unitId =>
+  BANK.questions.filter(q => q.unit === unitId && q.type === 'reflect');
+function isReflectUnit(unitId) {
+  const all = BANK.questions.filter(q => q.unit === unitId);
+  return all.length > 0 && all.every(q => q.type === 'reflect');
+}
+const workQs = unitId => BANK.questions.filter(q => q.unit === unitId && q.type === 'worksheet');
+function isWorkUnit(unitId) {
+  const all = BANK.questions.filter(q => q.unit === unitId);
+  return all.length > 0 && all.every(q => q.type === 'worksheet');
+}
+const workWritten = unitId => workQs(unitId).filter(q => (S.work[q.id] || []).length).length;
+function workRound(unitId) {
+  const qs = workQs(unitId);
+  if (!qs.length) return 0;
+  return Math.max(...qs.map(q => (S.work[q.id] || []).length));
+}
+/* 값 묶음(키 → 숫자)으로부터 비율과 산식 문자열을 만듭니다.
+   ratio      a ÷ b
+   sumRatio   a ÷ (a + b)
+   sum2Ratio  (a + b) ÷ c            */
+function calcFrom(q, v) {
+  const need = q.inputs.map(f => f.key);
+  if (need.some(k => v[k] === null || v[k] === undefined)) return { value: null, expr: '' };
+  const n = k => v[k];
+  let num, den, expr;
+  if (q.calc === 'sumRatio') {
+    num = n('a'); den = n('a') + n('b');
+    expr = `${n('a')} ÷ (${n('a')} + ${n('b')}) × 100`;
+  } else if (q.calc === 'sum2Ratio') {
+    num = n('a') + n('b'); den = n('c');
+    expr = `(${n('a')} + ${n('b')}) ÷ ${n('c')} × 100`;
+  } else {
+    num = n('a'); den = n('b');
+    expr = `${n('a')} ÷ ${n('b')} × 100`;
+  }
+  if (!isFinite(den) || den === 0) return { value: null, expr: '분모가 0입니다' };
+  return { value: (num / den) * 100, expr };
+}
+/* 저장된 기록에서 산식을 다시 만들 때 */
+const exprOf = (q, rec) => calcFrom(q, rec).expr.replace(' × 100', '');
+/* 회차: 모든 문항이 n번 이상 작성된 최대 n */
+function reflectRound(unitId) {
+  const qs = reflectQs(unitId);
+  if (!qs.length) return 0;
+  return Math.min(...qs.map(q => (S.reflect[q.id] || []).length));
+}
+const reflectWritten = unitId =>
+  reflectQs(unitId).filter(q => (S.reflect[q.id] || []).length).length;
 
 /* ---- 단원 진행률 ---- */
 function practiceProgress(unitId) {
@@ -731,10 +951,120 @@ async function submitCheck(unitId, payload) {
   return { via: 'download' };
 }
 
+
+/* ============================================================================
+   프로필 동물 — 이름에 고정 배정. 직접 그린 SVG 라 파일이 필요 없습니다.
+   명단에 없는 이름은 이름 해시로 배정되며, 같은 이름이면 항상 같은 동물입니다.
+   ========================================================================== */
+const AVATAR_MAP = {
+  '박재국': 'dog',    '노혜영': 'sheep',  '추진주': 'chick',
+  '정재현': 'hamster','손성재': 'deer',   '이용호': 'husky',
+  '김희철': 'fox',    '박서영': 'panda',  '김경수': 'raccoon',
+  '강상우': 'tiger',  '김지영': 'koala',
+};
+const AVATAR_ORDER = ['dog','sheep','chick','hamster','deer','husky','fox','panda','raccoon','tiger','koala','pig'];
+
+/* 동물별 색과 부위 정의 */
+const ANIMALS = {
+  dog:     { name:'강아지', head:'#C08A5E', ear:'floppy', earFill:'#8A5334', muzzle:'#FAEFE2', nose:'#4A3A2E', tongue:true },
+  sheep:   { name:'양',     head:'#EFE2D2', ear:'side',   earFill:'#D9C6B2', wool:true,  nose:'#5A4636' },
+  chick:   { name:'병아리', head:'#F7CE46', ear:'none',   earFill:'#F7CE46', comb:true,  beak:'#F09134' },
+  hamster: { name:'햄스터', head:'#AFB4BA', ear:'round',  earFill:'#F0C3C6', muzzle:'#C6CAD0', nose:'#4A4A4A', teeth:true },
+  deer:    { name:'사슴',   head:'#E3B187', ear:'side',   earFill:'#C48F63', antler:true, nose:'#4A3A2E' },
+  husky:   { name:'허스키', head:'#3E4650', ear:'pointed',earFill:'#2C333B', mask:'#FBFCFD', tongue:true, nose:'#33393F' },
+  fox:     { name:'여우',   head:'#EE7B3C', ear:'pointed',earFill:'#C85A22', mask:'#FDFDFD', nose:'#4A3A2E' },
+  panda:   { name:'판다',   head:'#FBFCFD', ear:'round',  earFill:'#333A42', patch:'#333A42', nose:'#333A42' },
+  raccoon: { name:'라쿤',   head:'#9AA1A8', ear:'round',  earFill:'#7A8189', band:true, nose:'#3E444A' },
+  tiger:   { name:'호랑이', head:'#F0A03C', ear:'round',  earFill:'#D07A22', stripe:true, muzzle:'#FDF3E6', nose:'#4A3A2E' },
+  koala:   { name:'코알라', head:'#A6ADB4', ear:'big',    earFill:'#C9CED3', nose:'#4A4A4A', bigNose:true },
+  pig:     { name:'돼지',   head:'#F0AEB8', ear:'pointed',earFill:'#D98A97', snout:'#E890A0', nose:'#B96A79' },
+};
+
+function animalFor(name) {
+  const key = String(name || '').trim();
+  if (AVATAR_MAP[key]) return AVATAR_MAP[key];
+  let h = 0;
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) % 100000;
+  return AVATAR_ORDER[h % AVATAR_ORDER.length];
+}
+
+/* 귀 모양 */
+function ears(a) {
+  const f = a.earFill;
+  switch (a.ear) {
+    case 'floppy':  return `<ellipse cx="13" cy="36" rx="10" ry="16" fill="${f}"/>
+                            <ellipse cx="67" cy="36" rx="10" ry="16" fill="${f}"/>`;
+    case 'pointed': return `<path d="M14 34 L20 8 L38 22 Z" fill="${f}"/>
+                            <path d="M66 34 L60 8 L42 22 Z" fill="${f}"/>`;
+    case 'round':   return `<circle cx="19" cy="22" r="11" fill="${f}"/>
+                            <circle cx="61" cy="22" r="11" fill="${f}"/>`;
+    case 'big':     return `<circle cx="14" cy="28" r="14" fill="${f}"/>
+                            <circle cx="66" cy="28" r="14" fill="${f}"/>`;
+    case 'side':    return `<ellipse cx="8" cy="40" rx="11" ry="6.5" fill="${f}"/>
+                            <ellipse cx="72" cy="40" rx="11" ry="6.5" fill="${f}"/>`;
+    default:        return '';
+  }
+}
+
+function animalSvg(key, size) {
+  const a = ANIMALS[key] || ANIMALS.dog;
+  const S = size || 40;
+  const dark = '#5A4436';
+  let extra = '';
+
+  if (a.antler) extra += `<g stroke="#8D5C3A" stroke-width="4" stroke-linecap="round" fill="none">
+      <path d="M27 22 L20 4"/><path d="M22 11 L12 10"/><path d="M20 4 L25 1"/>
+      <path d="M53 22 L60 4"/><path d="M58 11 L68 10"/><path d="M60 4 L55 1"/></g>`;
+  if (a.comb) extra += `<path d="M40 12 q-8 -9 -2 -11 q4 -1 4 4 q3 -6 7 -3 q4 3 -1 8 Z" fill="#E8453C"/>`;
+
+  let head = `<rect x="8" y="16" width="64" height="56" rx="26" fill="${a.head}"/>`;
+  if (a.wool) head += `<g fill="#FFFFFF">
+      <circle cx="26" cy="24" r="10"/><circle cx="40" cy="18" r="11"/><circle cx="54" cy="24" r="10"/>
+      <circle cx="20" cy="34" r="8"/><circle cx="60" cy="34" r="8"/></g>`;
+  if (a.mask) head += `<path d="M40 30 q-18 4 -18 22 q0 16 18 20 q18 -4 18 -20 q0 -18 -18 -22 Z" fill="${a.mask}"/>`;
+  if (a.patch) head += `<ellipse cx="26" cy="44" rx="9" ry="10" fill="${a.patch}"/>
+                        <ellipse cx="54" cy="44" rx="9" ry="10" fill="${a.patch}"/>`;
+  if (a.band) head += `<path d="M13 40 q27 -9 54 0 q-5 12 -27 12 q-22 0 -27 -12 Z" fill="#3E444A"/>`;
+  if (a.stripe) head += `<g stroke="#8A4A12" stroke-width="3.6" stroke-linecap="round">
+      <path d="M34 20 L31 30"/><path d="M46 20 L49 30"/><path d="M14 40 L23 42"/><path d="M66 40 L57 42"/></g>`;
+  if (a.muzzle) head += `<ellipse cx="40" cy="56" rx="16" ry="12" fill="${a.muzzle}"/>`;
+  if (a.snout) head += `<ellipse cx="40" cy="54" rx="15" ry="11" fill="${a.snout}"/>
+                        <ellipse cx="34" cy="54" rx="3" ry="4" fill="${a.nose}"/>
+                        <ellipse cx="46" cy="54" rx="3" ry="4" fill="${a.nose}"/>`;
+
+  const eyeY = a.patch ? 44 : 46;
+  const onDark = !!(a.patch || a.band);
+  const eyeBase = onDark
+    ? `<circle cx="28" cy="${eyeY}" r="6.4" fill="#FDFDFD"/>
+       <circle cx="52" cy="${eyeY}" r="6.4" fill="#FDFDFD"/>` : '';
+  const eyes = eyeBase + `<circle cx="28" cy="${eyeY}" r="4.6" fill="#3A3A3A"/>
+                <circle cx="52" cy="${eyeY}" r="4.6" fill="#3A3A3A"/>
+                <circle cx="29.6" cy="${eyeY - 1.6}" r="1.7" fill="#fff"/>
+                <circle cx="53.6" cy="${eyeY - 1.6}" r="1.7" fill="#fff"/>`;
+  const cheeks = `<ellipse cx="18" cy="56" rx="5.5" ry="3.6" fill="#F2A0A6" opacity=".55"/>
+                  <ellipse cx="62" cy="56" rx="5.5" ry="3.6" fill="#F2A0A6" opacity=".55"/>`;
+
+  let face = '';
+  if (a.beak) face = `<path d="M33 54 L47 54 L40 63 Z" fill="${a.beak}"/>`;
+  else if (a.bigNose) face = `<ellipse cx="40" cy="56" rx="8" ry="10" fill="${a.nose}"/>`;
+  else if (!a.snout) {
+    face = `<ellipse cx="40" cy="55" rx="4.4" ry="3.4" fill="${a.nose}"/>
+            <path d="M40 58 q-5 5 -9 1 M40 58 q5 5 9 1" stroke="${dark}" stroke-width="2.2"
+                  stroke-linecap="round" fill="none"/>`;
+  }
+  if (a.teeth) face += `<rect x="37" y="60" width="6" height="6" rx="1.6" fill="#fff" stroke="${dark}" stroke-width="1.2"/>`;
+  if (a.tongue) face += `<path d="M36 60 q4 8 8 0 Z" fill="#F0808C"/>`;
+
+  return `<svg class="avatar" width="${S}" height="${S}" viewBox="0 0 80 80" aria-hidden="true">
+    ${extra}${ears(a)}${head}${eyes}${cheeks}${face}</svg>`;
+}
+const animalName = key => (ANIMALS[key] || ANIMALS.dog).name;
+
 /* ============================================================================
    6. 렌더 — 공통
    ========================================================================== */
 const $ = s => document.querySelector(s);
+const nl2br = s => esc(s).replace(/\n/g, '<br>');
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -770,20 +1100,42 @@ function renderUnitList() {
   box.innerHTML = BANK.units.map(u => {
     const p = practiceProgress(u.id);
     const submitted = !!S.check[u.id];
-    const empty = p.total === 0;
-    const sub = empty ? '문항 준비 중'
-      : submitted ? '체크 제출 완료'
-      : checkUnlocked(u.id) ? '체크 모드 열림'
-      : `연습 ${p.done}/${p.total}`;
+    const refl = isReflectUnit(u.id);
+    const work = isWorkUnit(u.id);
+    const total = refl ? reflectQs(u.id).length : work ? workQs(u.id).length : p.total;
+    const empty = total === 0;
+    let sub, ratio = p.ratio, done = submitted;
+    if (refl) {
+      const w = reflectWritten(u.id), r = reflectRound(u.id);
+      ratio = total ? w / total : 0;
+      done = !!S.sent[u.id];
+      sub = S.sent[u.id] ? '제출 완료'
+        : r >= 2 ? `${r}차까지 작성`
+        : w === 0 ? '아직 안 썼어요'
+        : w < total ? `작성 ${w}/${total}` : '1차 작성 완료';
+    } else if (work) {
+      const w = workWritten(u.id), r = workRound(u.id);
+      ratio = total ? w / total : 0;
+      done = !!S.sent[u.id];
+      sub = S.sent[u.id] ? '제출 완료'
+        : w === 0 ? '아직 기록 없음'
+        : w < total ? `기록 ${w}/${total}`
+        : r >= 2 ? `${r}차까지 기록` : '4개 모두 기록';
+    } else {
+      sub = empty ? '문항 준비 중'
+        : submitted ? '체크 제출 완료'
+        : checkUnlocked(u.id) ? '체크 모드 열림'
+        : `연습 ${p.done}/${p.total}`;
+    }
     return `<button class="unit-btn" data-unit="${esc(u.id)}" style="--u:${esc(u.color || '#1B3A6B')}"
         aria-current="${CUR_UNIT === u.id}" ${empty ? 'disabled' : ''}>
       <div class="row">
         <span class="ic">${esc(u.icon || '•')}</span>
         <span class="nm">${esc(u.title)}</span>
-        <span class="qn mono">${p.total || 0}</span>
+        <span class="qn mono">${total || 0}</span>
       </div>
       <div class="sub">${esc(sub)}</div>
-      <div class="bar ${submitted ? 'done' : ''}"><i style="width:${Math.round(p.ratio * 100)}%"></i></div>
+      <div class="bar ${done ? 'done' : ''}"><i style="width:${Math.round(ratio * 100)}%"></i></div>
     </button>`;
   }).join('');
   box.querySelectorAll('[data-unit]').forEach(b =>
@@ -793,9 +1145,17 @@ function renderUnitList() {
 /* ============================================================================
    7. 단원 상세
    ========================================================================== */
+function paintTheme(unitId) {
+  const u = BANK.units.find(x => x.id === unitId);
+  document.documentElement.style.setProperty('--u', (u && u.color) || '#1B3A6B');
+}
+
 function openUnit(unitId) {
   CUR_UNIT = unitId; RUN = null;
+  paintTheme(unitId);
   renderUnitList();
+  if (isReflectUnit(unitId)) return renderReflectPanel(unitId);
+  if (isWorkUnit(unitId)) return renderWorkPanel(unitId);
   const u = BANK.units.find(x => x.id === unitId);
   const p = practiceProgress(unitId);
   const lst = BANK.questions.filter(q => q.unit === unitId && q.modes.length);
@@ -1293,6 +1653,576 @@ function renderTagProfile(queue, answers) {
   </div>`;
 }
 
+
+/* ============================================================================
+   성찰 단원 — 채점 없음. 쓰고, 모아보고, 다시 쓰는 흐름
+   ========================================================================== */
+let REF = null;   // { unitId, round, i, drafts:{qid:text} }
+
+function renderReflectPanel(unitId) {
+  const u = BANK.units.find(x => x.id === unitId);
+  const qs = reflectQs(unitId);
+  const written = reflectWritten(unitId);
+  const round = reflectRound(unitId);
+  const sent = S.sent[unitId];
+  const partial = written > 0 && written < qs.length;
+
+  const rows = qs.map((q, i) => {
+    const drafts = S.reflect[q.id] || [];
+    const last = drafts[drafts.length - 1];
+    const state = !drafts.length ? '<span class="rstate none">미작성</span>'
+      : `<span class="rstate done">${drafts.length}차 · ${last.text.trim().length}자</span>`;
+    return `<div class="rrow">
+      <span class="rnum mono">${i + 1}</span>
+      <div class="rq">${esc(q.prompt)}</div>
+      ${state}
+    </div>`;
+  }).join('');
+
+  let cta;
+  if (sent) {
+    cta = `<button class="btn quiet" id="refView">제출한 내용 보기</button>`;
+  } else if (round === 0) {
+    cta = `<button class="btn unit" id="refStart">${partial ? '이어서 쓰기' : '쓰기 시작'}</button>`;
+  } else {
+    cta = `<button class="btn unit" id="refReview">모아보기</button>
+           <button class="btn quiet" id="refAgain" style="margin-top:8px">${round + 1}차로 다시 쓰기</button>`;
+  }
+
+  $('#stage').innerHTML = `
+    <div class="panel unit-panel" style="--u:${esc(u.color || '#5F7A1E')}">
+      <div class="unit-head">
+        <span class="big-ic">${esc(u.icon || '✍️')}</span>
+        <div>
+          <span class="eyebrow tinted">${esc(u.title)} · ${qs.length}문항</span>
+          <h2>${esc(u.subtitle || '')}</h2>
+          <p>맞고 틀림이 없습니다. 점수도 매기지 않습니다.</p>
+        </div>
+      </div>
+      ${u.note ? `<div class="notice unit-note" style="margin-top:14px">${esc(u.note)}</div>` : ''}
+
+      <div class="rlist">${rows}</div>
+
+      ${round >= 2 ? `<div class="notice good" style="margin-top:14px">
+        <b>${round}차까지 썼습니다.</b> 모아보기에서 회차별 답을 나란히 볼 수 있어요.</div>` : ''}
+      ${sent ? `<div class="notice" style="margin-top:14px">제출 ${esc(String(sent).slice(0, 16).replace('T', ' '))} · 수정할 수 없습니다.</div>` : ''}
+
+      <div class="foot" style="flex-direction:column;align-items:stretch">${cta}</div>
+    </div>`;
+
+  const on = (id, fn) => { const el = $(id); if (el) el.addEventListener('click', fn); };
+  on('#refStart', () => startReflect(unitId, 1));
+  on('#refAgain', () => {
+    if (confirm(`${round + 1}차로 다시 씁니다. 이전에 쓴 답은 그대로 보관돼요.`))
+      startReflect(unitId, round + 1);
+  });
+  on('#refReview', () => reviewReflect(unitId));
+  on('#refView', () => reviewReflect(unitId));
+}
+
+function startReflect(unitId, round) {
+  const qs = reflectQs(unitId);
+  // 미완성 회차라면 이어서. 아직 안 쓴 첫 문항으로 이동
+  const drafts = {};
+  qs.forEach(q => {
+    const list = S.reflect[q.id] || [];
+    if (list.length >= round) drafts[q.id] = list[round - 1].text;
+  });
+  let start = qs.findIndex(q => drafts[q.id] === undefined);
+  if (start < 0) start = 0;
+  REF = { unitId, round, i: start, drafts };
+  renderReflectWrite();
+}
+
+function renderReflectWrite() {
+  const { unitId, round, i, drafts } = REF;
+  const u = BANK.units.find(x => x.id === unitId);
+  const qs = reflectQs(unitId);
+  const q = qs[i];
+  const prev = (S.reflect[q.id] || []).slice(0, round - 1);
+  const cur = drafts[q.id] || '';
+
+  $('#stage').innerHTML = `
+    <div class="runner" style="--u:${esc(u.color || '#5F7A1E')}">
+      <div class="runner-bar">
+        <span class="mode-tag prac">${round}차 작성</span>
+        <span class="pos mono">${i + 1} / ${qs.length}</span>
+        <span class="spacer"></span>
+        <button class="ghost-btn" style="border-color:var(--line-2);color:var(--muted)" id="refExit">저장하고 나가기</button>
+      </div>
+      <div class="runner-body">
+        <span class="eyebrow tinted">정답 없음 · 채점 없음</span>
+        <p class="q-prompt" style="margin-top:8px">${esc(q.prompt)}</p>
+        ${q.context ? `<div class="q-context">${nl2br(q.context)}</div>` : ''}
+
+        ${q.think && q.think.length ? `<div class="think">
+          <span class="eyebrow">생각해볼 것</span>
+          <ul>${q.think.map(t => `<li>${esc(t)}</li>`).join('')}</ul>
+        </div>` : ''}
+
+        ${prev.length ? prev.map((d, n) => `<details class="prev" ${n === prev.length - 1 ? 'open' : ''}>
+          <summary>${n + 1}차에 쓴 답 <span class="dim mono">${d.text.trim().length}자</span></summary>
+          <div class="prevbody">${esc(d.text)}</div>
+        </details>`).join('') : ''}
+
+        <textarea class="free-input" id="refIn" placeholder="${esc(q.placeholder)}">${esc(cur)}</textarea>
+        <div class="counter mono" id="refCnt">0자</div>
+
+        <div class="foot">
+          ${i > 0 ? '<button class="btn quiet sm" id="refPrev" style="margin-top:0">이전</button>' : ''}
+          <span class="spacer"></span>
+          <button class="btn sm unit" id="refNext" style="margin-top:0">
+            ${i === qs.length - 1 ? '모아보기' : '다음 질문'}
+          </button>
+        </div>
+      </div>
+    </div>`;
+
+  const ta = $('#refIn');
+  const count = () => { $('#refCnt').textContent = ta.value.trim().length + '자'; };
+  ta.addEventListener('input', count); count();
+  ta.focus();
+
+  const stash = () => { REF.drafts[q.id] = ta.value; };
+  const commit = () => {
+    stash();
+    const text = (REF.drafts[q.id] || '').trim();
+    if (!text) return;
+    const list = S.reflect[q.id] || (S.reflect[q.id] = []);
+    const rec = { text, at: new Date().toISOString() };
+    if (list.length >= round) list[round - 1] = rec; else list.push(rec);
+    bumpStreak(); saveState(); renderStats(); renderUnitList();
+  };
+
+  $('#refExit').addEventListener('click', () => { commit(); openUnit(unitId); });
+  const pv = $('#refPrev');
+  if (pv) pv.addEventListener('click', () => { commit(); REF.i--; renderReflectWrite(); });
+  $('#refNext').addEventListener('click', () => {
+    commit();
+    if (REF.i === qs.length - 1) reviewReflect(unitId);
+    else { REF.i++; renderReflectWrite(); }
+  });
+}
+
+function reviewReflect(unitId) {
+  const u = BANK.units.find(x => x.id === unitId);
+  const qs = reflectQs(unitId);
+  const round = reflectRound(unitId);
+  const missing = qs.filter(q => !(S.reflect[q.id] || []).length);
+  const sent = S.sent[unitId];
+
+  const cards = qs.map((q, i) => {
+    const drafts = S.reflect[q.id] || [];
+    if (!drafts.length) {
+      return `<div class="rcard empty-card">
+        <span class="rnum mono">${i + 1}</span>
+        <div class="rcbody"><div class="rcq">${esc(q.prompt)}</div>
+        <p class="rcnone">아직 쓰지 않았습니다.</p></div></div>`;
+    }
+    const last = drafts[drafts.length - 1];
+    const older = drafts.slice(0, -1);
+    return `<div class="rcard">
+      <span class="rnum mono">${i + 1}</span>
+      <div class="rcbody">
+        <div class="rcq">${esc(q.prompt)}</div>
+        ${q.context ? `<div class="q-context" style="margin-bottom:10px">${nl2br(q.context)}</div>` : ''}
+        <div class="rclatest">
+          <span class="eyebrow tinted">${drafts.length}차 · ${last.text.trim().length}자</span>
+          <div class="rctext">${esc(last.text)}</div>
+        </div>
+        ${older.map((d, n) => `<details class="prev">
+          <summary>${n + 1}차에 쓴 답과 비교 <span class="dim mono">${d.text.trim().length}자</span></summary>
+          <div class="prevbody">${esc(d.text)}</div>
+        </details>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  $('#stage').innerHTML = `
+    <div class="panel unit-panel" style="--u:${esc(u.color || '#5F7A1E')}">
+      <span class="eyebrow tinted">모아보기 · ${esc(u.title)}</span>
+      <h2 style="font-size:24px;font-weight:800;letter-spacing:-.035em;margin:3px 0 6px">
+        지금까지 쓴 답</h2>
+      <p style="color:var(--muted);font-size:14.5px;margin:0 0 18px">
+        ${round >= 2
+          ? '회차를 펼쳐 이전 답과 비교해 보세요. 무엇이 달라졌는지가 이 과정의 결과입니다.'
+          : '한 번 훑어보고, 다른 단원을 마친 뒤 돌아와 다시 써보세요.'}</p>
+
+      ${missing.length ? `<div class="notice warn" style="margin-bottom:16px">
+        <b>아직 ${missing.length}개를 쓰지 않았습니다.</b> 네 질문을 모두 써야 제출할 수 있어요.</div>` : ''}
+
+      <div class="rcards">${cards}</div>
+
+      <div class="foot" style="flex-wrap:wrap;gap:8px">
+        <button class="btn quiet sm" id="refBack" style="margin-top:0">단원으로</button>
+        <span class="spacer"></span>
+        ${sent ? '<span class="note">제출 완료 · 수정할 수 없습니다</span>' : `
+          <button class="btn quiet sm" id="refMore" style="margin-top:0">${round + 1}차로 다시 쓰기</button>
+          <button class="btn sm unit" id="refSend" style="margin-top:0" ${missing.length ? 'disabled' : ''}>제출하기</button>`}
+      </div>
+      ${sent ? '' : '<p class="note" style="margin:10px 0 0">제출하면 더 이상 고칠 수 없습니다. 충분히 다시 써본 뒤에 누르세요.</p>'}
+    </div>`;
+
+  const on = (id, fn) => { const el = $(id); if (el) el.addEventListener('click', fn); };
+  on('#refBack', () => openUnit(unitId));
+  on('#refMore', () => {
+    if (confirm(`${round + 1}차로 다시 씁니다. 이전 답은 그대로 보관돼요.`))
+      startReflect(unitId, round + 1);
+  });
+  on('#refSend', () => sendReflect(unitId));
+}
+
+async function sendReflect(unitId) {
+  const qs = reflectQs(unitId);
+  if (!confirm('제출하면 수정할 수 없습니다. 제출할까요?')) return;
+
+  const u = BANK.units.find(x => x.id === unitId);
+  const payload = {
+    unit: unitId, unitTitle: u.title, bankVersion: BANK.version,
+    submittedAt: new Date().toISOString(), elapsedSec: 0,
+    auto: { got: 0, max: 0 }, manualCount: qs.length, tagScores: {},
+    items: qs.map(q => {
+      const drafts = S.reflect[q.id] || [];
+      return {
+        id: q.id, type: 'reflect', tags: q.tags, maxScore: 0, answered: !!drafts.length,
+        choice: null, value: null, score: null,
+        text: drafts.map((d, n) => `[${n + 1}차 · ${d.at.slice(0, 10)}]\n${d.text}`).join('\n\n')
+      };
+    })
+  };
+
+  $('#stage').innerHTML = `<div class="panel"><div class="empty">
+    <span class="ic">⏳</span><p>제출하고 있어요</p></div></div>`;
+
+  let via = 'local';
+  try { via = (await submitCheck(unitId, payload)).via; }
+  catch (e) {
+    $('#stage').innerHTML = `
+      <div class="panel">
+        <div class="notice bad"><b>제출에 실패했습니다.</b> ${esc(e.message)}</div>
+        <div class="notice" style="margin-top:10px">쓴 내용은 그대로 남아 있습니다. 아래 버튼으로 파일을 내려 담당자에게 전달해 주세요.</div>
+        <div class="foot"><button class="btn sm" id="dl" style="margin-top:0">파일로 내려받기</button>
+        <span class="spacer"></span><button class="btn quiet sm" id="bk" style="margin-top:0">돌아가기</button></div>
+      </div>`;
+    $('#dl').addEventListener('click', async () => {
+      const keep = CONFIG.SYNC_URL; CONFIG.SYNC_URL = '';
+      await submitCheck(unitId, payload); CONFIG.SYNC_URL = keep;
+      toast('파일을 내려받았습니다');
+    });
+    $('#bk').addEventListener('click', () => reviewReflect(unitId));
+    return;
+  }
+
+  S.sent[unitId] = payload.submittedAt;
+  S.check[unitId] = payload;
+  saveState(); renderStats(); renderUnitList();
+
+  $('#stage').innerHTML = `
+    <div class="panel done-wrap unit-panel" style="--u:${esc(u.color || '#5F7A1E')}">
+      <span class="eyebrow tinted">제출 완료 · ${esc(u.title)}</span>
+      <h2>제출됐습니다</h2>
+      <p class="lead">쓴 답은 회차별로 함께 전달됩니다. 면접에서 이 내용을 놓고 이야기합니다.</p>
+      ${via === 'download'
+        ? '<div class="notice warn"><b>서버가 연결되지 않아 파일로 내려받았습니다.</b> 담당자에게 전달해 주세요.</div>'
+        : '<div class="notice good">답변이 서버에 기록됐습니다.</div>'}
+      <div class="foot"><span class="spacer"></span>
+        <button class="btn sm" id="done" style="margin-top:0">단원 목록으로</button></div>
+    </div>`;
+  $('#done').addEventListener('click', () => openUnit(unitId));
+}
+
+
+/* ============================================================================
+   내 지표 계산 — 공식 보고 내 숫자를 넣어 기록. 채점 없음, 여러 번 수정 가능
+   ========================================================================== */
+let WRK = null;   // { unitId, i }
+
+const fmtPct = v => v === null ? '—' : (Math.round(v * 10) / 10).toFixed(1) + '%';
+
+function renderWorkPanel(unitId) {
+  const u = BANK.units.find(x => x.id === unitId);
+  const qs = workQs(unitId);
+  const sent = S.sent[unitId];
+  const written = workWritten(unitId);
+
+  const rows = qs.map((q, i) => {
+    const recs = S.work[q.id] || [];
+    const last = recs[recs.length - 1];
+    return `<div class="rrow">
+      <span class="rnum mono">${i + 1}</span>
+      <div class="rq">${esc(q.prompt)}
+        <div class="wformula mono">${esc(q.formula)}</div>
+      </div>
+      ${last
+        ? `<span class="wval mono">${fmtPct(last.value)}<span class="wround">${recs.length}차</span></span>`
+        : '<span class="rstate none">미기록</span>'}
+    </div>`;
+  }).join('');
+
+  $('#stage').innerHTML = `
+    <div class="panel unit-panel" style="--u:${esc(u.color || '#96341F')}">
+      <div class="unit-head">
+        <span class="big-ic">${esc(u.icon || '🧮')}</span>
+        <div>
+          <span class="eyebrow tinted">${esc(u.title)} · ${qs.length}개 지표</span>
+          <h2>${esc(u.subtitle || '')}</h2>
+          <p>공식은 화면에 있습니다. 내 시트에서 숫자만 옮겨 적으면 됩니다.</p>
+        </div>
+      </div>
+      ${u.note ? `<div class="notice unit-note" style="margin-top:14px">${esc(u.note)}</div>` : ''}
+
+      <div class="rlist">${rows}</div>
+
+      ${sent ? `<div class="notice" style="margin-top:14px">제출 ${esc(String(sent).slice(0, 16).replace('T', ' '))} · 수정할 수 없습니다.</div>` : ''}
+
+      <div class="foot" style="flex-direction:column;align-items:stretch">
+        ${sent
+          ? '<button class="btn quiet" id="wkView">제출한 기록 보기</button>'
+          : `<button class="btn unit" id="wkStart">${written ? '이어서 기록하기' : '기록 시작'}</button>
+             ${written ? '<button class="btn quiet" id="wkReview" style="margin-top:8px">모아보기</button>' : ''}`}
+      </div>
+    </div>`;
+
+  const on = (id, fn) => { const el = $(id); if (el) el.addEventListener('click', fn); };
+  on('#wkStart', () => { WRK = { unitId, i: 0 }; renderWorkEntry(); });
+  on('#wkReview', () => reviewWork(unitId));
+  on('#wkView', () => reviewWork(unitId));
+}
+
+function renderWorkEntry() {
+  const { unitId, i } = WRK;
+  const u = BANK.units.find(x => x.id === unitId);
+  const qs = workQs(unitId);
+  const q = qs[i];
+  const recs = S.work[q.id] || [];
+  const last = recs[recs.length - 1];
+
+  $('#stage').innerHTML = `
+    <div class="runner" style="--u:${esc(u.color || '#96341F')}">
+      <div class="runner-bar">
+        <span class="mode-tag prac">계산 기록</span>
+        <span class="pos mono">${i + 1} / ${qs.length}</span>
+        <span class="spacer"></span>
+        <button class="ghost-btn" style="border-color:var(--line-2);color:var(--muted)" id="wkExit">나가기</button>
+      </div>
+      <div class="runner-body">
+        <span class="eyebrow tinted">채점 없음 · 여러 번 고쳐 쓸 수 있어요</span>
+        <p class="q-prompt" style="margin-top:8px">${esc(q.prompt)}</p>
+
+        <div class="wcalc">
+          <span class="eyebrow">계산 공식</span>
+          <div class="wcalc-f mono">${esc(q.formula)}</div>
+          ${q.watch ? `<div class="wcalc-w">${esc(q.watch)}</div>` : ''}
+        </div>
+
+        <div class="winputs">
+          ${q.inputs.map(f => `
+            <label class="wfield">
+              <span class="wlabel">${esc(f.label)}</span>
+              ${f.hint ? `<span class="whint">${esc(f.hint)}</span>` : ''}
+              <input type="text" inputmode="decimal" data-k="${esc(f.key)}"
+                     value="${last && last[f.key] !== undefined ? esc(last[f.key]) : ''}"
+                     placeholder="숫자" autocomplete="off">
+            </label>`).join('')}
+        </div>
+
+        <div class="wresult" id="wkOut">
+          <span class="eyebrow">계산 결과</span>
+          <div class="wbig mono" id="wkVal">—</div>
+          <div class="wnote" id="wkHow"></div>
+        </div>
+
+        <div class="memo-block">
+          <span class="eyebrow">${esc(q.memoLabel || '메모')}</span>
+          <textarea class="free-input" id="wkMemo" style="min-height:130px"
+            placeholder="${esc(q.memoHint || '')}">${last ? esc(last.memo || '') : ''}</textarea>
+          <div class="counter mono" id="wkCnt">0자</div>
+        </div>
+
+        ${recs.length ? `<details class="prev" open>
+          <summary>지난 기록 ${recs.length}건 보기</summary>
+          <div class="prevbody">${recs.map((r, n) =>
+            `<div class="wprev"><b>${n + 1}차</b> <span class="mono">${fmtPct(r.value)}</span>
+             <span class="dim mono">${esc(String(r.at).slice(0, 10))}</span>
+             ${r.memo ? `<div class="wprevmemo">${esc(r.memo)}</div>` : ''}</div>`).join('')}</div>
+        </details>` : ''}
+
+        <div class="foot">
+          ${i > 0 ? '<button class="btn quiet sm" id="wkPrev" style="margin-top:0">이전</button>' : ''}
+          <span class="spacer"></span>
+          <button class="btn sm unit" id="wkNext" style="margin-top:0">
+            ${i === qs.length - 1 ? '저장하고 모아보기' : '저장하고 다음'}
+          </button>
+        </div>
+      </div>
+    </div>`;
+
+  const nums = () => {
+    const out = {};
+    document.querySelectorAll('.winputs input').forEach(el => {
+      const v = parseFloat(String(el.value).replace(/,/g, '').trim());
+      out[el.dataset.k] = isNaN(v) ? null : v;
+    });
+    return out;
+  };
+  const recompute = () => {
+    const r = calcFrom(q, nums());
+    $('#wkVal').textContent = fmtPct(r.value);
+    $('#wkHow').textContent = r.expr ||
+      `${q.inputs.length}개 숫자를 모두 넣으면 계산됩니다.`;
+    return r.value;
+  };
+  document.querySelectorAll('.winputs input').forEach(el => el.addEventListener('input', recompute));
+  recompute();
+
+  const ta = $('#wkMemo');
+  const count = () => { $('#wkCnt').textContent = ta.value.trim().length + '자'; };
+  ta.addEventListener('input', count); count();
+
+  const commit = () => {
+    const n = nums();
+    const r = calcFrom(q, n);
+    if (r.value === null) return false;                  // 숫자가 덜 채워지면 기록하지 않음
+    const list = S.work[q.id] || (S.work[q.id] = []);
+    list.push(Object.assign({}, n, { value: r.value, memo: ta.value.trim(), at: new Date().toISOString() }));
+    bumpStreak(); saveState(); renderStats(); renderUnitList();
+    return true;
+  };
+
+  $('#wkExit').addEventListener('click', () => { commit(); openUnit(unitId); });
+  const pv = $('#wkPrev');
+  if (pv) pv.addEventListener('click', () => { commit(); WRK.i--; renderWorkEntry(); });
+  $('#wkNext').addEventListener('click', () => {
+    if (!commit()) { toast('숫자를 모두 넣어주세요'); return; }
+    if (WRK.i === qs.length - 1) reviewWork(unitId);
+    else { WRK.i++; renderWorkEntry(); }
+  });
+}
+
+function reviewWork(unitId) {
+  const u = BANK.units.find(x => x.id === unitId);
+  const qs = workQs(unitId);
+  const sent = S.sent[unitId];
+  const missing = qs.filter(q => !(S.work[q.id] || []).length);
+
+  // 연장률과 재수강률이 모두 기록됐으면 간격을 보여줍니다
+  const ext = (S.work['ws-001'] || []).slice(-1)[0];
+  const re = (S.work['ws-002'] || []).slice(-1)[0];
+  const gapBox = (ext && re && ext.value !== null && re.value !== null)
+    ? `<div class="notice good" style="margin-bottom:16px">
+         <b>연장률 ${fmtPct(ext.value)} · 재수강률 ${fmtPct(re.value)}</b> —
+         두 지표의 간격은 ${(Math.round((ext.value - re.value) * 10) / 10).toFixed(1)}%p 입니다.
+         이 간격이 환불로 빠진 몫입니다.</div>`
+    : '';
+
+  const cards = qs.map((q, i) => {
+    const recs = S.work[q.id] || [];
+    if (!recs.length) {
+      return `<div class="rcard empty-card"><span class="rnum mono">${i + 1}</span>
+        <div class="rcbody"><div class="rcq">${esc(q.prompt)}</div>
+        <p class="rcnone">아직 기록하지 않았습니다.</p></div></div>`;
+    }
+    const last = recs[recs.length - 1];
+    const older = recs.slice(0, -1);
+    return `<div class="rcard"><span class="rnum mono">${i + 1}</span>
+      <div class="rcbody">
+        <div class="rcq">${esc(q.prompt)}</div>
+        <div class="wformula mono" style="margin-bottom:9px">${esc(q.formula)}</div>
+        <div class="wsum">
+          <span class="wbig mono">${fmtPct(last.value)}</span>
+          <span class="wsum-x mono">${esc(exprOf(q, last))}</span>
+          <span class="wround">${recs.length}차</span>
+        </div>
+        ${last.memo ? `<div class="rctext">${esc(last.memo)}</div>` : ''}
+        ${older.length ? `<details class="prev">
+          <summary>지난 기록 ${older.length}건과 비교</summary>
+          <div class="prevbody">${older.map((r, n) =>
+            `<div class="wprev"><b>${n + 1}차</b> <span class="mono">${fmtPct(r.value)}</span>
+             <span class="dim mono">${esc(String(r.at).slice(0, 10))}</span>
+             ${r.memo ? `<div class="wprevmemo">${esc(r.memo)}</div>` : ''}</div>`).join('')}</div>
+        </details>` : ''}
+      </div></div>`;
+  }).join('');
+
+  $('#stage').innerHTML = `
+    <div class="panel unit-panel" style="--u:${esc(u.color || '#96341F')}">
+      <span class="eyebrow tinted">모아보기 · ${esc(u.title)}</span>
+      <h2 style="font-size:24px;font-weight:800;letter-spacing:-.035em;margin:3px 0 6px">내 지표 기록</h2>
+      <p style="color:var(--muted);font-size:14.5px;margin:0 0 18px">
+        숫자가 바뀌면 다시 기록하세요. 이전 기록은 지워지지 않고 함께 남습니다.</p>
+      ${gapBox}
+      ${missing.length ? `<div class="notice warn" style="margin-bottom:16px">
+        <b>아직 ${missing.length}개를 기록하지 않았습니다.</b> 네 지표를 모두 기록해야 제출할 수 있어요.</div>` : ''}
+      <div class="rcards">${cards}</div>
+      <div class="foot" style="flex-wrap:wrap;gap:8px">
+        <button class="btn quiet sm" id="wkBack" style="margin-top:0">단원으로</button>
+        <span class="spacer"></span>
+        ${sent ? '<span class="note">제출 완료 · 수정할 수 없습니다</span>' : `
+          <button class="btn quiet sm" id="wkMore" style="margin-top:0">다시 기록하기</button>
+          <button class="btn sm unit" id="wkSend" style="margin-top:0" ${missing.length ? 'disabled' : ''}>제출하기</button>`}
+      </div>
+      ${sent ? '' : '<p class="note" style="margin:10px 0 0">제출하면 더 이상 고칠 수 없습니다.</p>'}
+    </div>`;
+
+  const on = (id, fn) => { const el = $(id); if (el) el.addEventListener('click', fn); };
+  on('#wkBack', () => openUnit(unitId));
+  on('#wkMore', () => { WRK = { unitId, i: 0 }; renderWorkEntry(); });
+  on('#wkSend', () => sendWork(unitId));
+}
+
+async function sendWork(unitId) {
+  const qs = workQs(unitId);
+  if (!confirm('제출하면 수정할 수 없습니다. 제출할까요?')) return;
+  const u = BANK.units.find(x => x.id === unitId);
+  const payload = {
+    unit: unitId, unitTitle: u.title, bankVersion: BANK.version,
+    submittedAt: new Date().toISOString(), elapsedSec: 0,
+    auto: { got: 0, max: 0 }, manualCount: qs.length, tagScores: {},
+    items: qs.map(q => {
+      const recs = S.work[q.id] || [];
+      return {
+        id: q.id, type: 'worksheet', tags: q.tags, maxScore: 0, answered: !!recs.length,
+        choice: null, score: null,
+        value: recs.length ? recs[recs.length - 1].value : null,
+        text: recs.map((r, n) =>
+          `[${n + 1}차 · ${String(r.at).slice(0, 10)}] ${fmtPct(r.value)}  ${exprOf(q, r)}`
+          + (r.memo ? `\n${r.memo}` : '')).join('\n\n')
+      };
+    })
+  };
+
+  $('#stage').innerHTML = `<div class="panel"><div class="empty">
+    <span class="ic">⏳</span><p>제출하고 있어요</p></div></div>`;
+
+  let via = 'local';
+  try { via = (await submitCheck(unitId, payload)).via; }
+  catch (e) {
+    $('#stage').innerHTML = `<div class="panel">
+      <div class="notice bad"><b>제출에 실패했습니다.</b> ${esc(e.message)}</div>
+      <div class="notice" style="margin-top:10px">기록은 그대로 남아 있습니다.</div>
+      <div class="foot"><span class="spacer"></span>
+        <button class="btn quiet sm" id="bk" style="margin-top:0">돌아가기</button></div></div>`;
+    $('#bk').addEventListener('click', () => reviewWork(unitId));
+    return;
+  }
+  S.sent[unitId] = payload.submittedAt;
+  S.check[unitId] = payload;
+  saveState(); renderStats(); renderUnitList();
+
+  $('#stage').innerHTML = `
+    <div class="panel done-wrap unit-panel" style="--u:${esc(u.color || '#96341F')}">
+      <span class="eyebrow tinted">제출 완료 · ${esc(u.title)}</span>
+      <h2>제출됐습니다</h2>
+      <p class="lead">회차별 기록과 메모가 함께 전달됩니다.</p>
+      ${via === 'download'
+        ? '<div class="notice warn"><b>서버가 연결되지 않아 파일로 내려받았습니다.</b> 담당자에게 전달해 주세요.</div>'
+        : '<div class="notice good">기록이 서버에 저장됐습니다.</div>'}
+      <div class="foot"><span class="spacer"></span>
+        <button class="btn sm" id="done" style="margin-top:0">단원 목록으로</button></div>
+    </div>`;
+  $('#done').addEventListener('click', () => openUnit(unitId));
+}
+
 /* ============================================================================
    10. 복습함
    ========================================================================== */
@@ -1429,12 +2359,23 @@ async function boot(name) {
   }
   st.name = name;
   st.practice = st.practice || {}; st.check = st.check || {}; st.review = st.review || [];
+  st.reflect = st.reflect || {}; st.work = st.work || {};
+  st.sent = st.sent || {};
+  if (typeof st.reflectSent === 'string' && st.reflectSent) {   // 옛 형식 이관
+    st.sent.reflect = st.reflectSent;
+  }
+  delete st.reflectSent;
   S = st;
   bumpStreak(); saveState();
 
   $('#gate').classList.add('hidden');
   $('#shell').classList.remove('hidden');
   $('#tbWho').textContent = name;
+  const key = animalFor(name);
+  $('#tbFace').innerHTML = animalSvg(key, 30);
+  $('#meFace').innerHTML = animalSvg(key, 40);
+  $('#meName').textContent = name;
+  $('#meAnimal').textContent = animalName(key);
   renderStats(); renderUnitList();
 
   const firstOpen = BANK.units.find(u => qOfUnit(u.id, 'practice').length || qOfUnit(u.id, 'check').length);
