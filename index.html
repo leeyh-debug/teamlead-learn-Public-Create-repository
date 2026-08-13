@@ -99,6 +99,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:fo
   font-size:13px; line-height:1.55;
 }
 .gate-err b{ color:#fff; font-weight:700; }
+.gate-err .mono{ font-size:12px; color:#fff; }
 
 /* ---------- 상단바 ---------- */
 .topbar{
@@ -598,6 +599,26 @@ function checkUnlocked(unitId) {
 /* ============================================================================
    5. 동기화
    ========================================================================== */
+/* 서버 주소 형태만 보고 잡을 수 있는 설정 실수를 진단합니다.
+   문제가 없으면 null 을 돌려줍니다. */
+function diagnoseUrl(u) {
+  u = String(u || '').trim();
+  if (!u) return 'config.json 의 SYNC_URL 이 비어 있습니다.';
+  if (u.indexOf('script.googleusercontent.com') > -1)
+    return '주소를 잘못 복사했습니다. 브라우저 주소창이 아니라 Apps Script <b>배포 관리</b> 화면에 표시된 URL 을 넣어야 합니다.';
+  if (u.indexOf('/a/macros/') > -1)
+    return '배포가 회사 도메인으로 제한되어 있습니다. Apps Script 에서 <b>배포 관리 → 연필 → 액세스 권한을 "모든 사용자"</b> 로 바꾸고, 새로 표시된 URL 을 다시 넣어주세요.';
+  if (u.indexOf('http://') === 0)
+    return '주소가 <b>https://</b> 로 시작해야 합니다.';
+  if (u.indexOf('https://') !== 0)
+    return '주소가 <b>https://</b> 로 시작해야 합니다.';
+  if (u.indexOf('script.google.com') === -1)
+    return 'Apps Script 주소가 아닙니다. <b>script.google.com</b> 으로 시작하는 주소여야 합니다.';
+  if (!/\/exec\/?$/.test(u.split('?')[0]))
+    return '주소가 <b>/exec</b> 로 끝나야 합니다. /dev 로 끝나는 테스트 주소는 쓸 수 없습니다.';
+  return null;
+}
+
 /* 서버 명단에 등록된 이름인지 확인합니다.
    { ok, allowed, name }  ok=false 면 서버 문제, allowed=false 면 미등록 */
 async function verifyName(name) {
@@ -610,7 +631,7 @@ async function verifyName(name) {
       return { ok: false, reason: 'html' };
     }
     const j = await r.json();
-    if (!j || j.ok !== true) return { ok: false, reason: (j && j.error) || 'error' };
+    if (!j || j.ok !== true) return { ok: false, reason: 'server', message: (j && j.error) || '' };
     return { ok: true, allowed: !!j.allowed, name: j.name || name };
   } catch (e) {
     return { ok: false, reason: 'network' };
@@ -1283,6 +1304,7 @@ ${byUnit}
 태그 없는 문항 ${orphan.length}건${orphan.length ? '\n  ' + orphan.join(', ') : ''}
 저장소 ${store.persistent ? 'localStorage 사용 가능' : '메모리 전용 — 새로고침 시 초기화'}
 서버 ${CONFIG.SYNC_URL || '(미설정 · 제출은 파일 다운로드)'}
+진단 ${diagnoseUrl(CONFIG.SYNC_URL) ? diagnoseUrl(CONFIG.SYNC_URL).replace(/<[^>]+>/g, '') : '주소 형태 정상'}
 토큰 ${CONFIG.ACCESS_TOKEN ? '설정됨' : '미설정'}${SYNC_BLOCKED ? '\n거부 ' + SYNC_BLOCKED : ''}</pre>
       <div class="foot" style="margin-top:14px">
         <button class="btn quiet sm" id="pingBtn" style="margin-top:0">서버 연결 테스트</button>
@@ -1295,10 +1317,8 @@ ${byUnit}
 /* 배포한 Apps Script 웹앱이 실제로 응답하는지 3단계로 확인합니다 */
 async function testServer() {
   const out = $('#pingOut');
-  if (!CONFIG.SYNC_URL) {
-    out.textContent = 'CONFIG.SYNC_URL 이 비어 있습니다';
-    return;
-  }
+  const bad = diagnoseUrl(CONFIG.SYNC_URL);
+  if (bad) { out.innerHTML = '⚠ ' + bad; return; }
   const log = [];
   const say = () => { out.innerHTML = log.join('<br>'); };
   out.textContent = '확인 중…';
@@ -1404,9 +1424,25 @@ async function tryEnter() {
   const res = await verifyName(raw);
 
   if (!res.ok) {
-    err.innerHTML = res.reason === 'html'
-      ? '<b>서버 설정이 완료되지 않았습니다.</b><br>담당자에게 알려주세요.'
-      : '<b>서버에 연결할 수 없습니다.</b><br>잠시 후 다시 시도해 주세요.';
+    const why = diagnoseUrl(CONFIG.SYNC_URL);
+    // 서버가 사유를 알려준 경우가 가장 정확하므로 먼저 씁니다
+    if (res.reason === 'server' && /토큰/.test(res.message || '')) {
+      err.innerHTML = '<b>서버 암호가 일치하지 않습니다.</b><br>'
+        + 'sync.gs 의 ACCESS_TOKEN 과 config.json 의 ACCESS_TOKEN 값이 같아야 합니다.';
+    } else if (res.reason === 'server' && res.message) {
+      err.innerHTML = '<b>서버가 요청을 거부했습니다.</b><br>' + esc(res.message);
+    } else if (why) {
+      err.innerHTML = '<b>서버 주소 설정에 문제가 있습니다.</b><br>' + why;
+    } else if (res.reason === 'html') {
+      err.innerHTML = '<b>서버가 응답하지 않습니다.</b><br>'
+        + 'Apps Script 배포의 액세스 권한이 "모든 사용자" 인지 확인해 주세요.';
+    } else {
+      err.innerHTML = '<b>서버에 연결할 수 없습니다.</b><br>'
+        + '주소 형태는 정상입니다. 다음을 확인해 주세요.<br>'
+        + '① 배포 액세스 권한이 "모든 사용자" 인지<br>'
+        + '② 시크릿 창에서 그 주소를 열면 <span class="mono">{"ok":true...}</span> 가 나오는지<br>'
+        + '③ 코드를 수정한 뒤 "새 버전" 으로 재배포했는지';
+    }
     btn.disabled = false; btn.textContent = label; gateBusy = false;
     return;
   }
