@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>팀장 과정 · 밀당PT 수학온택트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+/* ============================================================
+   CONFIG 는 </body> 직전 스크립트 상단에 있습니다.
+   ============================================================ */
+:root{
+  --ink:        #0E1B2E;
+  --ink-2:      #1B3A6B;
+  --paper:      #F4F6FA;
+  --card:       #FFFFFF;
+  --line:       #DCE3EC;
+  --line-2:     #C3CEDC;
+  --muted:      #6B7C93;
+  --muted-2:    #93A2B5;
+
+  /* 판단 스펙트럼: 0점(미흡) → 3점(최선). 신호등 대신 단일 색상 램프 */
+  --s0: #8494A8;
+  --s1: #4E7FA8;
+  --s2: #1E8E9E;
+  --s3: #0FA58C;
+
+  --check:      #B4761C;   /* 체크 모드 = 평가 중 */
+  --check-bg:   #FBF3E4;
+  --danger:     #C4463C;
+
+  --r-sm: 6px;
+  --r:    10px;
+  --r-lg: 16px;
+
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --sans: 'Pretendard Variable', Pretendard, -apple-system, system-ui, sans-serif;
+}
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; }
+body{
+  font-family:var(--sans);
+  background:var(--paper);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.55;
+}
+button{ font-family:inherit; cursor:pointer; }
+button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible{
+  outline:2px solid var(--ink-2); outline-offset:2px;
+}
+.mono{ font-family:var(--mono); font-variant-numeric:tabular-nums; }
+.eyebrow{
+  font-family:var(--mono); font-size:10px; font-weight:500;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--muted-2);
+}
+.hidden{ display:none !important; }
+
+/* ---------- 진입 화면 ---------- */
+#gate{
+  min-height:100vh; display:grid; place-items:center; padding:24px;
+  background:
+    radial-gradient(60rem 30rem at 50% -10%, #16305A 0%, transparent 70%),
+    var(--ink);
+}
+.gate-card{ width:100%; max-width:420px; color:#fff; text-align:left; }
+.gate-mark{
+  font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+  color:#7E9AC4; margin-bottom:28px;
+}
+.gate-card h1{
+  font-size:30px; font-weight:800; letter-spacing:-.03em;
+  margin:0 0 14px; line-height:1.25;
+}
+.gate-card p{ color:#A9BCD6; font-size:14px; margin:0 0 28px; }
+.gate-card label{
+  display:block; font-family:var(--mono); font-size:10px;
+  letter-spacing:.14em; color:#7E9AC4; margin-bottom:8px; text-transform:uppercase;
+}
+.gate-card input{
+  width:100%; padding:13px 14px; font-size:15px; font-family:inherit;
+  background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.22);
+  border-radius:var(--r); color:#fff;
+}
+.gate-card input::placeholder{ color:#6F86A6; }
+.gate-card button{
+  width:100%; margin-top:14px; padding:13px; font-size:15px; font-weight:700;
+  background:#fff; color:var(--ink); border:0; border-radius:var(--r);
+}
+.gate-note{ font-size:12px; color:#7E9AC4; margin-top:18px; line-height:1.6; }
+.gate-err{ min-height:0; margin-top:12px; }
+.gate-err:not(:empty){
+  background:rgba(196,70,60,.16); border:1px solid rgba(240,169,162,.45);
+  border-radius:var(--r); padding:11px 13px; color:#F6C7C2;
+  font-size:13px; line-height:1.55;
+}
+.gate-err b{ color:#fff; font-weight:700; }
+
+/* ---------- 상단바 ---------- */
+.topbar{
+  position:sticky; top:0; z-index:30; background:var(--ink); color:#fff;
+  display:flex; align-items:center; gap:16px; padding:0 20px; height:56px;
+}
+.topbar .brand{ font-size:14px; font-weight:700; letter-spacing:-.01em; }
+.topbar .brand span{ color:#7E9AC4; font-weight:500; }
+.topbar .spacer{ flex:1; }
+.chip{
+  display:inline-flex; align-items:baseline; gap:6px;
+  font-family:var(--mono); font-size:12px; padding:5px 10px;
+  background:rgba(255,255,255,.09); border-radius:100px; white-space:nowrap;
+}
+.chip b{ font-size:13px; font-weight:700; }
+.chip i{ font-style:normal; color:#8FA6C6; font-size:10px; letter-spacing:.08em; }
+.topbar .who{ font-size:13px; color:#C3D2E6; }
+.ghost-btn{
+  background:transparent; border:1px solid rgba(255,255,255,.28);
+  color:#C3D2E6; font-size:12px; padding:6px 11px; border-radius:var(--r-sm);
+}
+
+/* ---------- 레이아웃 ---------- */
+.wrap{ max-width:1080px; margin:0 auto; padding:28px 20px 80px; }
+.cols{ display:grid; grid-template-columns:280px 1fr; gap:24px; align-items:start; }
+@media (max-width:860px){
+  .cols{ grid-template-columns:1fr; }
+  .cols > aside{ order:2; }
+  .cols > #stage{ order:1; }
+}
+/* 좁은 화면에서는 상단바를 이름·정확도까지 다 밀어넣지 않습니다 */
+@media (max-width:640px){
+  .topbar{ padding:0 14px; gap:8px; }
+  .topbar .who, .topbar .chip.opt{ display:none; }
+  .wrap{ padding:18px 14px 64px; }
+}
+
+.panel{
+  background:var(--card); border:1px solid var(--line);
+  border-radius:var(--r-lg); padding:18px;
+}
+.panel + .panel{ margin-top:16px; }
+.panel-h{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:14px;
+}
+
+/* ---------- 통계 ---------- */
+.stat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:2px; background:var(--line); border-radius:var(--r); overflow:hidden; }
+.stat{ background:var(--card); padding:12px 13px; }
+.stat .v{ font-family:var(--mono); font-size:19px; font-weight:700; letter-spacing:-.02em; }
+.stat .k{ font-size:11px; color:var(--muted); margin-top:1px; }
+
+/* ---------- 단원 목록 ---------- */
+.unit-list{ display:flex; flex-direction:column; gap:8px; }
+.unit-btn{
+  display:block; width:100%; text-align:left; background:var(--card);
+  border:1px solid var(--line); border-radius:var(--r);
+  padding:12px 13px; transition:border-color .12s, background .12s;
+}
+.unit-btn:hover:not(:disabled){ border-color:var(--line-2); }
+.unit-btn[aria-current="true"]{ border-color:var(--ink); background:#F8FAFD; }
+.unit-btn:disabled{ opacity:.5; cursor:not-allowed; }
+.unit-btn .row{ display:flex; align-items:center; gap:9px; }
+.unit-btn .ic{ font-size:16px; line-height:1; }
+.unit-btn .nm{ font-size:14px; font-weight:600; flex:1; letter-spacing:-.01em; }
+.unit-btn .qn{ font-family:var(--mono); font-size:11px; color:var(--muted-2); }
+.unit-btn .sub{ font-size:11px; color:var(--muted); margin-top:3px; }
+
+/* 진도 바 */
+.bar{ height:4px; background:var(--line); border-radius:100px; margin-top:9px; overflow:hidden; }
+.bar > i{ display:block; height:100%; background:var(--ink-2); border-radius:100px; }
+.bar.done > i{ background:var(--s3); }
+
+/* ---------- 단원 상세 ---------- */
+.unit-head{ display:flex; align-items:flex-start; gap:14px; margin-bottom:4px; }
+.unit-head .big-ic{ font-size:30px; line-height:1.1; }
+.unit-head h2{ font-size:22px; font-weight:800; letter-spacing:-.03em; margin:2px 0 4px; }
+.unit-head p{ margin:0; color:var(--muted); font-size:13px; }
+
+.mode-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:20px; }
+@media (max-width:620px){ .mode-grid{ grid-template-columns:1fr; } }
+.mode-card{
+  border:1px solid var(--line); border-radius:var(--r);
+  padding:15px; display:flex; flex-direction:column; gap:9px;
+}
+.mode-card.check{ border-color:#E6D2AC; background:var(--check-bg); }
+.mode-card h3{ margin:0; font-size:15px; font-weight:700; letter-spacing:-.01em; }
+.mode-card .rules{ margin:0; padding:0; list-style:none; font-size:12px; color:var(--muted); }
+.mode-card .rules li{ padding-left:11px; position:relative; }
+.mode-card .rules li::before{
+  content:''; position:absolute; left:0; top:9px;
+  width:3px; height:3px; border-radius:50%; background:var(--line-2);
+}
+.mode-card.check .rules li::before{ background:#D3B27C; }
+.btn{
+  border:0; border-radius:var(--r-sm); padding:11px 14px;
+  font-size:14px; font-weight:700; background:var(--ink); color:#fff;
+  margin-top:auto;
+}
+.btn:disabled{ background:var(--line-2); color:#F4F6FA; cursor:not-allowed; }
+.btn.amber{ background:var(--check); }
+.btn.quiet{ background:transparent; color:var(--ink-2); border:1px solid var(--line-2); }
+.btn.sm{ padding:8px 12px; font-size:13px; }
+.lock-why{ font-size:11px; color:var(--check); font-family:var(--mono); }
+
+/* ---------- 문항 실행 ---------- */
+.runner{ background:var(--card); border:1px solid var(--line); border-radius:var(--r-lg); overflow:hidden; }
+.runner.check-mode{ border-color:#E6D2AC; }
+.runner-bar{
+  display:flex; align-items:center; gap:12px;
+  padding:12px 18px; border-bottom:1px solid var(--line); background:#FBFCFE;
+}
+.runner.check-mode .runner-bar{ background:var(--check-bg); border-bottom-color:#EBDCBE; }
+.runner-bar .mode-tag{
+  font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.12em;
+  padding:3px 8px; border-radius:100px; background:var(--ink); color:#fff;
+}
+.runner.check-mode .runner-bar .mode-tag{ background:var(--check); }
+.runner-bar .pos{ font-family:var(--mono); font-size:12px; color:var(--muted); }
+.runner-bar .spacer{ flex:1; }
+.hearts{ font-size:13px; letter-spacing:2px; }
+.runner-body{ padding:22px 18px 20px; }
+@media (min-width:620px){ .runner-body{ padding:26px 26px 22px; } }
+
+.q-type{ margin-bottom:9px; }
+.q-context{
+  font-size:12.5px; color:var(--muted); background:#F4F7FB;
+  border-left:2px solid var(--line-2); padding:9px 12px;
+  border-radius:0 var(--r-sm) var(--r-sm) 0; margin-bottom:14px;
+  white-space:pre-wrap;
+}
+.q-prompt{
+  font-size:17px; font-weight:600; letter-spacing:-.02em;
+  line-height:1.5; margin:0 0 18px; white-space:pre-wrap;
+}
+
+/* 선택지 */
+.choices{ display:flex; flex-direction:column; gap:8px; }
+.choice{
+  display:flex; gap:11px; width:100%; text-align:left;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--r);
+  padding:13px 14px; font-size:14px; line-height:1.5; color:var(--ink);
+  transition:border-color .12s, background .12s;
+}
+.choice:hover:not(:disabled){ border-color:var(--ink-2); background:#F8FAFD; }
+.choice:disabled{ cursor:default; }
+.choice .key{
+  flex:none; width:22px; height:22px; border-radius:var(--r-sm);
+  background:#EEF2F7; color:var(--muted); font-family:var(--mono);
+  font-size:11px; font-weight:700; display:grid; place-items:center; margin-top:1px;
+}
+.choice .txt{ flex:1; }
+.choice[data-picked="true"]{ border-color:var(--ink); border-width:2px; padding:12px 13px; }
+
+/* 채점 후 노출: 점수 칩 */
+.score-chip{
+  flex:none; font-family:var(--mono); font-size:11px; font-weight:700;
+  padding:2px 7px; border-radius:100px; color:#fff; height:20px; margin-top:2px;
+}
+.sc-0{ background:var(--s0); } .sc-1{ background:var(--s1); }
+.sc-2{ background:var(--s2); } .sc-3{ background:var(--s3); }
+.choice .why{
+  font-size:12.5px; color:var(--muted); margin-top:7px;
+  padding-top:7px; border-top:1px dashed var(--line);
+}
+
+/* 숫자 입력 */
+.num-row{ display:flex; gap:9px; align-items:center; flex-wrap:wrap; }
+.num-row input{
+  width:170px; padding:12px 13px; font-family:var(--mono); font-size:16px;
+  border:1px solid var(--line-2); border-radius:var(--r); background:var(--card); color:var(--ink);
+}
+.num-row .unit-label{ font-size:14px; color:var(--muted); }
+.hint-btn{
+  background:none; border:0; color:var(--ink-2); font-size:12.5px;
+  text-decoration:underline; padding:0; margin-top:12px;
+}
+.hint-box{
+  font-size:12.5px; color:var(--muted); background:#F4F7FB;
+  padding:10px 12px; border-radius:var(--r-sm); margin-top:10px; white-space:pre-wrap;
+}
+
+/* 서술 / 미션 */
+.free-input{
+  width:100%; min-height:170px; padding:13px; font-family:inherit; font-size:14px;
+  line-height:1.6; border:1px solid var(--line-2); border-radius:var(--r);
+  resize:vertical; color:var(--ink); background:var(--card);
+}
+.rubric{
+  margin-top:12px; border:1px solid var(--line); border-radius:var(--r);
+  padding:12px 14px; background:#FBFCFE;
+}
+.rubric .eyebrow{ display:block; margin-bottom:7px; }
+.rubric ul{ margin:0; padding-left:17px; font-size:12.5px; color:var(--muted); }
+.counter{ font-family:var(--mono); font-size:11px; color:var(--muted-2); margin-top:6px; text-align:right; }
+
+/* 시그니처: 판단 스펙트럼 */
+.spectrum{ margin-top:20px; padding-top:18px; border-top:1px solid var(--line); }
+.spectrum .eyebrow{ display:block; margin-bottom:10px; }
+.spec-track{ padding:0 40px; }
+.spec-inner{ position:relative; height:34px; }
+.spec-rail{
+  position:absolute; left:0; right:0; top:15px; height:4px; border-radius:100px;
+  background:linear-gradient(90deg, var(--s0), var(--s1), var(--s2), var(--s3));
+}
+.spec-mark{ position:absolute; top:0; transform:translateX(-50%); text-align:center; width:74px; }
+.spec-mark .dot{
+  width:11px; height:11px; border-radius:50%; margin:11px auto 0;
+  border:2.5px solid var(--card); box-shadow:0 0 0 1.5px currentColor;
+}
+.spec-mark .lb{ font-family:var(--mono); font-size:9.5px; letter-spacing:.06em; margin-top:3px; display:block; }
+.spec-mark.me{ color:var(--ink); }
+.spec-mark.me .dot{ background:var(--ink); }
+.spec-mark.best{ color:var(--s3); }
+.spec-mark.best .dot{ background:var(--s3); }
+.spec-gap{
+  font-size:13px; margin-top:6px; padding:11px 13px; border-radius:var(--r-sm);
+  background:#F4F7FB; color:var(--ink); line-height:1.55;
+}
+.spec-gap b{ font-weight:700; }
+
+.foot{
+  display:flex; align-items:center; gap:10px; margin-top:20px;
+  padding-top:16px; border-top:1px solid var(--line); flex-wrap:wrap;
+}
+.foot .spacer{ flex:1; }
+.foot .note{ font-size:12px; color:var(--muted); }
+
+/* ---------- 세션 종료 ---------- */
+.done-wrap{ text-align:left; }
+.done-wrap h2{ font-size:22px; font-weight:800; letter-spacing:-.03em; margin:0 0 6px; }
+.done-wrap .lead{ color:var(--muted); font-size:13.5px; margin:0 0 20px; }
+.kv{ display:grid; grid-template-columns:1fr 1fr; gap:2px; background:var(--line); border-radius:var(--r); overflow:hidden; margin-bottom:18px; }
+.kv > div{ background:var(--card); padding:13px 15px; }
+.kv .v{ font-family:var(--mono); font-size:20px; font-weight:700; }
+.kv .k{ font-size:11.5px; color:var(--muted); }
+
+/* 역량 프로파일 */
+.tagrow{ display:flex; align-items:center; gap:11px; padding:7px 0; }
+.tagrow .nm{ font-size:13px; width:150px; flex:none; }
+.tagrow .tr{ flex:1; height:6px; background:var(--line); border-radius:100px; overflow:hidden; }
+.tagrow .tr > i{ display:block; height:100%; border-radius:100px; }
+.tagrow .pc{ font-family:var(--mono); font-size:11.5px; color:var(--muted); width:38px; text-align:right; flex:none; }
+@media (max-width:520px){ .tagrow .nm{ width:100px; font-size:12px; } }
+
+/* 알림 */
+.notice{
+  border-radius:var(--r); padding:13px 15px; font-size:13px; line-height:1.6;
+  border:1px solid var(--line); background:#FBFCFE; color:var(--muted);
+}
+.notice.warn{ border-color:#E6D2AC; background:var(--check-bg); color:#7A5313; }
+.notice.bad{ border-color:#EBC4C0; background:#FCF2F1; color:#8E2F27; }
+.notice b{ color:inherit; font-weight:700; }
+.notice + .notice{ margin-top:10px; }
+
+.empty{ text-align:center; padding:44px 20px; color:var(--muted); }
+.empty .ic{ font-size:26px; display:block; margin-bottom:10px; opacity:.5; }
+.empty p{ margin:0 0 4px; font-size:14px; }
+.empty small{ font-size:12px; color:var(--muted-2); }
+
+/* 개발자 검증 패널 */
+#devPanel{ margin-top:18px; }
+#devPanel pre{
+  font-family:var(--mono); font-size:11px; line-height:1.6; background:var(--ink);
+  color:#C9DCF2; padding:14px; border-radius:var(--r); overflow-x:auto; margin:0;
+}
+.toast{
+  position:fixed; left:50%; bottom:26px; transform:translateX(-50%);
+  background:var(--ink); color:#fff; font-size:13px; padding:11px 18px;
+  border-radius:100px; z-index:80; box-shadow:0 8px 24px rgba(14,27,46,.28);
+}
+@media (prefers-reduced-motion:reduce){ *{ transition:none !important; animation:none !important; } }
+</style>
+</head>
+<body>
+
+<!-- ===================== 진입 ===================== -->
+<section id="gate">
+  <div class="gate-card">
+    <div class="gate-mark">밀당PT · 수학온택트 본부</div>
+    <h1>팀장 과정</h1>
+    <p>연습으로 익히고, 체크로 제출합니다.</p>
+    <label for="nameInput">이름</label>
+    <input id="nameInput" type="text" placeholder="이름을 입력하세요" autocomplete="off" spellcheck="false">
+    <button id="startBtn">시작하기</button>
+    <div class="gate-err" id="gateErr"></div>
+    <p class="gate-note">등록된 이름으로만 입장할 수 있어요. 진행 기록은 이름으로 저장되고, 다른 기기에서도 이어서 할 수 있습니다.<br>
+    연습 모드는 몇 번이든 다시 풀 수 있고, 체크 모드는 단원당 한 번만 제출됩니다.</p>
+  </div>
+</section>
+
+<!-- ===================== 본 화면 ===================== -->
+<div id="shell" class="hidden">
+  <header class="topbar">
+    <div class="brand">팀장 과정 <span>· 수학온택트</span></div>
+    <div class="spacer"></div>
+    <div class="chip mono"><i>XP</i><b id="tbXp">0</b></div>
+    <div class="chip mono"><i>연속</i><b id="tbStreak">0</b></div>
+    <div class="chip mono opt"><i>정확도</i><b id="tbAcc">—</b></div>
+    <span class="who" id="tbWho"></span>
+    <button class="ghost-btn" id="logoutBtn">나가기</button>
+  </header>
+
+  <div class="wrap">
+    <div class="cols">
+      <!-- 좌측 레일 -->
+      <aside>
+        <div class="panel">
+          <div class="panel-h"><span class="eyebrow">학습 단원</span></div>
+          <div class="unit-list" id="unitList"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><span class="eyebrow">내 기록</span></div>
+          <div class="stat-grid">
+            <div class="stat"><div class="v mono" id="stXp">0</div><div class="k">XP</div></div>
+            <div class="stat"><div class="v mono" id="stDone">0</div><div class="k">푼 문항</div></div>
+            <div class="stat"><div class="v mono" id="stStreak">0</div><div class="k">연속 학습일</div></div>
+            <div class="stat"><div class="v mono" id="stAcc">—</div><div class="k">평균 획득률</div></div>
+          </div>
+          <button class="btn quiet sm" id="reviewBtn" style="width:100%;margin-top:12px">복습함 (0)</button>
+        </div>
+      </aside>
+
+      <!-- 메인 스테이지 -->
+      <section id="stage"></section>
+    </div>
+
+    <div id="devPanel" class="hidden"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================================
+   1. CONFIG — 운영자가 만지는 곳
+   ========================================================================== */
+const CONFIG = {
+  // ⚠️ 이 파일은 고치지 마세요.
+  // 서버 주소는 같은 폴더의 config.json 에서 설정합니다.
+
+  // 문항 뱅크 위치. 같은 폴더의 questions.json 을 읽습니다.
+  QUESTIONS_URL: 'questions.json',
+
+  // Apps Script 웹앱 URL. 비워두면 브라우저에만 저장되고,
+  // 체크 모드 제출은 JSON 파일 다운로드로 대체됩니다.
+  // 배포 시 액세스 권한이 "모든 사용자" 여야 합니다.
+  SYNC_URL: '',
+
+  // sync.gs 의 ACCESS_TOKEN 과 같은 값. 양쪽 모두 비워두면 검사하지 않습니다.
+  ACCESS_TOKEN: '',
+
+  // 체크 모드 해금 조건 — 해당 단원 연습 모드 완료율
+  UNLOCK_RATIO: 0.8,
+
+  // 연습 모드 하트. 0 이면 하트 없음(무제한)
+  HEARTS: 3,
+
+  // XP: 획득 점수 1점당
+  XP_PER_POINT: 10,
+
+  // 서술/미션 최소 글자 수
+  MIN_CHARS: 120,
+};
+
+/* config.json 이 있으면 CONFIG 를 덮어씁니다. 없으면 위 기본값을 씁니다. */
+async function loadConfig() {
+  try {
+    const r = await fetch('config.json?v=' + Date.now());
+    if (!r.ok) return;
+    const j = await r.json();
+    ['SYNC_URL', 'ACCESS_TOKEN'].forEach(k => {
+      if (typeof j[k] === 'string') CONFIG[k] = j[k].trim();
+    });
+  } catch (e) { /* 파일이 없으면 그냥 넘어갑니다 */ }
+}
+
+/* ============================================================================
+   2. 저장소 — localStorage 실패 시 메모리로 자동 대체
+   ========================================================================== */
+const store = (() => {
+  let mem = {}, ok = false;
+  try { localStorage.setItem('__t', '1'); localStorage.removeItem('__t'); ok = true; } catch (e) { ok = false; }
+  return {
+    persistent: ok,
+    get(k) { try { return ok ? localStorage.getItem(k) : (mem[k] ?? null); } catch (e) { return mem[k] ?? null; } },
+    set(k, v) { try { if (ok) localStorage.setItem(k, v); else mem[k] = v; } catch (e) { mem[k] = v; } },
+    del(k) { try { if (ok) localStorage.removeItem(k); else delete mem[k]; } catch (e) { delete mem[k]; } }
+  };
+})();
+
+const KEY = n => 'tl:' + n.trim().toLowerCase().replace(/\s+/g, '');
+
+/* ============================================================================
+   3. 상태
+   ========================================================================== */
+let BANK = { units: [], questions: [] };
+let BANK_ERRORS = [];
+let S = null;          // 진행 상태
+let CUR_UNIT = null;   // 선택된 단원 id
+let RUN = null;        // 실행 중 세션
+
+function blankState(name) {
+  return {
+    name, xp: 0, streak: 0, lastDay: null,
+    practice: {},   // qid -> { best, max, tries }
+    check: {},      // unitId -> { submittedAt, elapsedSec, items:[...], auto:{got,max}, manual:[...] }
+    review: []      // qid 목록
+  };
+}
+
+const todayStr = () => new Date().toISOString().slice(0, 10);
+
+function bumpStreak() {
+  const t = todayStr();
+  if (S.lastDay === t) return;
+  const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+  S.streak = (S.lastDay === y) ? S.streak + 1 : 1;
+  S.lastDay = t;
+}
+
+/* ============================================================================
+   4. 문항 뱅크 로드 + 검증
+   ========================================================================== */
+const CHOICE_TYPES = ['knowledge', 'situation'];
+const FREE_TYPES = ['mission', 'essay'];
+const ALL_TYPES = [...CHOICE_TYPES, 'number', ...FREE_TYPES];
+
+const TYPE_LABEL = {
+  knowledge: '지식 확인', number: '숫자 해석', situation: '상황 판단',
+  mission: '미션', essay: '서술'
+};
+
+async function loadBank() {
+  const res = await fetch(CONFIG.QUESTIONS_URL + '?v=' + Date.now());
+  if (!res.ok) throw new Error('questions.json 을 불러올 수 없습니다 (HTTP ' + res.status + ')');
+  const raw = await res.json();
+  BANK_ERRORS = [];
+
+  const units = (raw.units || []).slice().sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+  const unitIds = new Set(units.map(u => u.id));
+  const seen = new Set();
+  const questions = [];
+
+  (raw.questions || []).forEach((q, i) => {
+    const at = `questions[${i}]${q.id ? ' (' + q.id + ')' : ''}`;
+    const err = m => BANK_ERRORS.push(at + ' — ' + m);
+
+    if (!q.id) { err('id 없음'); return; }
+    if (seen.has(q.id)) { err('id 중복'); return; }
+    seen.add(q.id);
+    if (!unitIds.has(q.unit)) { err('units 에 없는 unit: ' + q.unit); return; }
+    if (!ALL_TYPES.includes(q.type)) { err('알 수 없는 type: ' + q.type); return; }
+    if (!q.prompt) { err('prompt 없음'); return; }
+
+    q.modes = Array.isArray(q.modes) && q.modes.length ? q.modes : ['practice', 'check'];
+    q.tags = Array.isArray(q.tags) ? q.tags : [];
+
+    if (CHOICE_TYPES.includes(q.type)) {
+      if (!Array.isArray(q.choices) || q.choices.length < 2) { err('choices 2개 이상 필요'); return; }
+      q.choices.forEach((c, ci) => {
+        if (typeof c.score !== 'number') err(`choices[${ci}].score 가 숫자가 아님`);
+      });
+      const max = Math.max(...q.choices.map(c => Number(c.score) || 0));
+      if (max <= 0) { err('최고점 선택지가 없음 (score 가 모두 0)'); return; }
+      q.maxScore = max;
+    } else if (q.type === 'number') {
+      if (!q.accept || typeof q.accept.value !== 'number') { err('accept.value 필요'); return; }
+      q.accept.tolerance = Number(q.accept.tolerance) || 0;
+      q.maxScore = Number(q.maxScore) || 1;
+    } else {
+      q.maxScore = Number(q.maxScore) || 0;   // 사람이 채점
+      q.autoScored = false;
+    }
+    questions.push(q);
+  });
+
+  BANK = { units, questions, version: raw.version || '—' };
+}
+
+const qOfUnit = (unitId, mode) =>
+  BANK.questions.filter(q => q.unit === unitId && q.modes.includes(mode));
+
+const isAuto = q => q.type !== 'mission' && q.type !== 'essay';
+
+/* ---- 단원 진행률 ---- */
+function practiceProgress(unitId) {
+  const qs = qOfUnit(unitId, 'practice');
+  if (!qs.length) return { done: 0, total: 0, ratio: 0 };
+  const done = qs.filter(q => S.practice[q.id]).length;
+  return { done, total: qs.length, ratio: done / qs.length };
+}
+function checkUnlocked(unitId) {
+  const p = practiceProgress(unitId);
+  return p.total > 0 && p.ratio >= CONFIG.UNLOCK_RATIO;
+}
+
+/* ============================================================================
+   5. 동기화
+   ========================================================================== */
+/* 서버 명단에 등록된 이름인지 확인합니다.
+   { ok, allowed, name }  ok=false 면 서버 문제, allowed=false 면 미등록 */
+async function verifyName(name) {
+  if (!CONFIG.SYNC_URL) return { ok: true, allowed: true, name, offline: true };
+  try {
+    const r = await fetch(CONFIG.SYNC_URL + '?action=verify&name='
+      + encodeURIComponent(name) + tokenParam());
+    const ct = r.headers.get('content-type') || '';
+    if (ct.indexOf('json') === -1) {
+      return { ok: false, reason: 'html' };
+    }
+    const j = await r.json();
+    if (!j || j.ok !== true) return { ok: false, reason: (j && j.error) || 'error' };
+    return { ok: true, allowed: !!j.allowed, name: j.name || name };
+  } catch (e) {
+    return { ok: false, reason: 'network' };
+  }
+}
+
+let SYNC_BLOCKED = null;   // 서버가 거부한 이유 (명단 미등록 · 토큰 불일치 등)
+const tokenParam = () => CONFIG.ACCESS_TOKEN ? '&token=' + encodeURIComponent(CONFIG.ACCESS_TOKEN) : '';
+
+async function syncLoad(name) {
+  if (!CONFIG.SYNC_URL) return null;
+  try {
+    const r = await fetch(CONFIG.SYNC_URL + '?action=load&name=' + encodeURIComponent(name) + tokenParam());
+    if (!r.ok) return null;
+    const j = await r.json();
+    if (j && j.ok === false) { SYNC_BLOCKED = j.error || '서버가 요청을 거부했습니다'; return null; }
+    return j && j.ok && j.state ? j.state : null;
+  } catch (e) { return null; }
+}
+
+let saveTimer = null;
+function saveState() {
+  if (!S) return;
+  store.set(KEY(S.name), JSON.stringify(S));
+  if (!CONFIG.SYNC_URL) return;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    // text/plain 으로 보내 CORS preflight 를 피합니다 (Apps Script 권장 방식)
+    fetch(CONFIG.SYNC_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'save', name: S.name, state: S, token: CONFIG.ACCESS_TOKEN })
+    }).catch(() => {});
+  }, 900);
+}
+
+async function submitCheck(unitId, payload) {
+  if (CONFIG.SYNC_URL) {
+    const r = await fetch(CONFIG.SYNC_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'submit', name: S.name, unit: unitId, submission: payload, token: CONFIG.ACCESS_TOKEN })
+    });
+    const j = await r.json();
+    if (!j || !j.ok) throw new Error(j && j.error ? j.error : '서버가 제출을 받지 못했습니다');
+    return { via: 'server' };
+  }
+  // 폴백: 파일 다운로드
+  const blob = new Blob([JSON.stringify({ name: S.name, unit: unitId, submission: payload }, null, 2)],
+    { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `제출_${S.name}_${unitId}_${todayStr()}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  return { via: 'download' };
+}
+
+/* ============================================================================
+   6. 렌더 — 공통
+   ========================================================================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+function toast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast'; el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2600);
+}
+
+function renderStats() {
+  const rec = Object.values(S.practice);
+  const got = rec.reduce((a, r) => a + r.best, 0);
+  const max = rec.reduce((a, r) => a + r.max, 0);
+  const acc = max ? Math.round(got / max * 100) + '%' : '—';
+  $('#tbXp').textContent = S.xp;
+  $('#tbStreak').textContent = S.streak;
+  $('#tbAcc').textContent = acc;
+  $('#stXp').textContent = S.xp;
+  $('#stDone').textContent = rec.length;
+  $('#stStreak').textContent = S.streak;
+  $('#stAcc').textContent = acc;
+  $('#reviewBtn').textContent = `복습함 (${S.review.length})`;
+  $('#reviewBtn').disabled = S.review.length === 0;
+}
+
+function renderUnitList() {
+  const box = $('#unitList');
+  if (!BANK.units.length) {
+    box.innerHTML = '<div class="notice">단원이 비어 있습니다. questions.json 의 <b>units</b> 에 단원을 추가하세요.</div>';
+    return;
+  }
+  box.innerHTML = BANK.units.map(u => {
+    const p = practiceProgress(u.id);
+    const submitted = !!S.check[u.id];
+    const empty = p.total === 0;
+    const sub = empty ? '문항 준비 중'
+      : submitted ? '체크 제출 완료'
+      : checkUnlocked(u.id) ? '체크 모드 열림'
+      : `연습 ${p.done}/${p.total}`;
+    return `<button class="unit-btn" data-unit="${esc(u.id)}"
+        aria-current="${CUR_UNIT === u.id}" ${empty ? 'disabled' : ''}>
+      <div class="row">
+        <span class="ic">${esc(u.icon || '•')}</span>
+        <span class="nm">${esc(u.title)}</span>
+        <span class="qn mono">${p.total || 0}</span>
+      </div>
+      <div class="sub">${esc(sub)}</div>
+      <div class="bar ${submitted ? 'done' : ''}"><i style="width:${Math.round(p.ratio * 100)}%"></i></div>
+    </button>`;
+  }).join('');
+  box.querySelectorAll('[data-unit]').forEach(b =>
+    b.addEventListener('click', () => openUnit(b.dataset.unit)));
+}
+
+/* ============================================================================
+   7. 단원 상세
+   ========================================================================== */
+function openUnit(unitId) {
+  CUR_UNIT = unitId; RUN = null;
+  renderUnitList();
+  const u = BANK.units.find(x => x.id === unitId);
+  const p = practiceProgress(unitId);
+  const checkQs = qOfUnit(unitId, 'check');
+  const submitted = S.check[unitId];
+  const unlocked = checkUnlocked(unitId);
+
+  const typeCount = {};
+  BANK.questions.filter(q => q.unit === unitId && q.modes.length).forEach(q => {
+    typeCount[q.type] = (typeCount[q.type] || 0) + 1;
+  });
+  const mix = Object.entries(typeCount).map(([t, n]) => `${TYPE_LABEL[t]} ${n}`).join(' · ');
+
+  $('#stage').innerHTML = `
+    <div class="panel">
+      <div class="unit-head">
+        <span class="big-ic">${esc(u.icon || '•')}</span>
+        <div>
+          <span class="eyebrow">단원 ${BANK.units.findIndex(x => x.id === unitId) + 1}</span>
+          <h2>${esc(u.title)}</h2>
+          <p>${esc(u.subtitle || '')}</p>
+        </div>
+      </div>
+      ${mix ? `<div class="eyebrow" style="margin-top:14px">${esc(mix)}</div>` : ''}
+      ${u.note ? `<div class="notice" style="margin-top:14px">${esc(u.note)}</div>` : ''}
+
+      <div class="mode-grid">
+        <div class="mode-card">
+          <span class="eyebrow">연습 모드</span>
+          <h3>익히기</h3>
+          <ul class="rules">
+            <li>몇 번이든 다시 풀 수 있어요</li>
+            <li>답을 고르면 바로 해설이 열려요</li>
+            <li>평가에 반영되지 않아요</li>
+          </ul>
+          <div class="eyebrow" style="margin-top:2px">진행 ${p.done} / ${p.total}</div>
+          <button class="btn" id="btnPractice" ${p.total ? '' : 'disabled'}>
+            ${p.done === 0 ? '연습 시작' : p.done < p.total ? '이어서 풀기' : '전체 다시 풀기'}
+          </button>
+        </div>
+
+        <div class="mode-card check">
+          <span class="eyebrow">체크 모드</span>
+          <h3>제출하기</h3>
+          <ul class="rules">
+            <li>단원당 한 번만, 재응시 없음</li>
+            <li>해설은 제출 후에 열려요</li>
+            <li>결과가 평가자에게 전달돼요</li>
+          </ul>
+          ${submitted
+            ? `<div class="lock-why mono">제출 ${esc(submitted.submittedAt.slice(0, 16).replace('T', ' '))}</div>
+               <button class="btn quiet" id="btnCheckDone">제출 내용 보기</button>`
+            : !checkQs.length
+              ? `<div class="lock-why mono">체크 문항 준비 중</div><button class="btn" disabled>대기</button>`
+              : unlocked
+                ? `<button class="btn amber" id="btnCheck">체크 시작 (${checkQs.length}문항)</button>`
+                : `<div class="lock-why mono">연습 ${Math.round(CONFIG.UNLOCK_RATIO * 100)}% 이상 완료 시 열립니다</div>
+                   <button class="btn" disabled>잠김</button>`}
+        </div>
+      </div>
+    </div>`;
+
+  const bp = $('#btnPractice');
+  if (bp) bp.addEventListener('click', () => startRun(unitId, 'practice'));
+  const bc = $('#btnCheck');
+  if (bc) bc.addEventListener('click', () => {
+    if (confirm(`체크 모드는 한 번만 제출할 수 있고 중간에 나가면 그대로 기록됩니다.\n${checkQs.length}문항, 지금 시작할까요?`))
+      startRun(unitId, 'check');
+  });
+  const bd = $('#btnCheckDone');
+  if (bd) bd.addEventListener('click', () => showCheckResult(unitId));
+}
+
+/* ============================================================================
+   8. 세션 실행
+   ========================================================================== */
+function startRun(unitId, mode, customQueue) {
+  let queue = customQueue || qOfUnit(unitId, mode);
+  if (mode === 'practice' && !customQueue) {
+    const p = practiceProgress(unitId);
+    // 다 풀었으면 전체, 아니면 안 푼 것부터
+    if (p.ratio < 1) queue = queue.filter(q => !S.practice[q.id]);
+  }
+  if (!queue.length) { toast('풀 문항이 없습니다'); return; }
+
+  RUN = {
+    unitId, mode, queue, i: 0,
+    hearts: mode === 'practice' ? CONFIG.HEARTS : 0,
+    answers: {}, startedAt: Date.now(), locked: false, hintOpen: false
+  };
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = RUN.queue[RUN.i];
+  const isCheck = RUN.mode === 'check';
+  const u = BANK.units.find(x => x.id === RUN.unitId);
+
+  $('#stage').innerHTML = `
+    <div class="runner ${isCheck ? 'check-mode' : ''}">
+      <div class="runner-bar">
+        <span class="mode-tag">${isCheck ? 'CHECK' : 'PRACTICE'}</span>
+        <span class="pos mono">${RUN.i + 1} / ${RUN.queue.length}</span>
+        <span class="spacer"></span>
+        ${!isCheck && CONFIG.HEARTS
+          ? `<span class="hearts">${'❤️'.repeat(Math.max(RUN.hearts, 0))}${'🖤'.repeat(Math.max(CONFIG.HEARTS - RUN.hearts, 0))}</span>`
+          : `<span class="pos mono">${esc(u.title)}</span>`}
+        <button class="ghost-btn" style="border-color:var(--line-2);color:var(--muted)" id="exitBtn">
+          ${isCheck ? '중단' : '나가기'}
+        </button>
+      </div>
+      <div class="runner-body" id="qBody"></div>
+    </div>`;
+  $('#exitBtn').addEventListener('click', () => {
+    if (isCheck && !confirm('지금 나가면 남은 문항은 미응답으로 제출됩니다. 나갈까요?')) return;
+    if (isCheck) { finishRun(); return; }
+    openUnit(RUN.unitId);
+  });
+
+  const body = $('#qBody');
+  body.innerHTML = `
+    <span class="eyebrow q-type">${TYPE_LABEL[q.type]}${q.maxScore ? ' · 배점 ' + q.maxScore : ''}</span>
+    ${q.context ? `<div class="q-context">${esc(q.context)}</div>` : ''}
+    <p class="q-prompt">${esc(q.prompt)}</p>
+    <div id="qInput"></div>
+    <div id="qFeedback"></div>
+    <div class="foot" id="qFoot"></div>`;
+
+  const input = $('#qInput');
+  if (CHOICE_TYPES.includes(q.type)) renderChoices(q, input);
+  else if (q.type === 'number') renderNumber(q, input);
+  else renderFree(q, input);
+}
+
+/* ---- 선택형 ---- */
+function renderChoices(q, box) {
+  const keys = 'ABCDEFGH';
+  box.innerHTML = `<div class="choices">` + q.choices.map((c, i) =>
+    `<button class="choice" data-i="${i}">
+       <span class="key mono">${keys[i]}</span>
+       <span class="txt">${esc(c.text)}</span>
+     </button>`).join('') + `</div>`;
+  box.querySelectorAll('.choice').forEach(b =>
+    b.addEventListener('click', () => answerChoice(q, Number(b.dataset.i))));
+}
+
+function answerChoice(q, idx) {
+  if (RUN.locked) return;
+  RUN.locked = true;
+  const score = Number(q.choices[idx].score) || 0;
+  RUN.answers[q.id] = { type: q.type, choice: idx, score, max: q.maxScore };
+  document.querySelectorAll('#qInput .choice').forEach((el, i) => {
+    el.disabled = true;
+    if (i === idx) el.dataset.picked = 'true';
+  });
+  if (RUN.mode === 'check') { commitAuto(q, score); nextFoot(); return; }
+
+  // 연습: 점수 칩 + 해설 + 스펙트럼 공개
+  document.querySelectorAll('#qInput .choice').forEach((el, i) => {
+    const c = q.choices[i];
+    const s = Math.min(Number(c.score) || 0, 3);
+    el.insertAdjacentHTML('afterbegin',
+      `<span class="score-chip sc-${s}">${Number(c.score) || 0}</span>`);
+    if (c.why) el.querySelector('.txt').insertAdjacentHTML('beforeend',
+      `<div class="why">${esc(c.why)}</div>`);
+  });
+  commitAuto(q, score);
+  if (q.type === 'situation') renderSpectrum(q, idx);
+  else {
+    const ok = score >= q.maxScore;
+    $('#qFeedback').innerHTML =
+      `<div class="notice ${ok ? '' : 'bad'}" style="margin-top:18px">
+         ${ok ? '<b>정답입니다.</b>' : '<b>다시 볼 문항이에요.</b> 복습함에 담았어요.'}
+         ${q.explain ? ' ' + esc(q.explain) : ''}
+       </div>`;
+  }
+  nextFoot();
+}
+
+/* ---- 시그니처: 판단 스펙트럼 ---- */
+function renderSpectrum(q, idx) {
+  const mine = Number(q.choices[idx].score) || 0;
+  const max = q.maxScore;
+  const bestIdx = q.choices.findIndex(c => Number(c.score) === max);
+  const pos = v => (max ? (v / max) * 100 : 0);
+  const same = mine === max;
+
+  const gap = same
+    ? `<b>최선의 판단입니다.</b> ${esc(q.choices[bestIdx].why || '')}`
+    : `내 답은 <b>${mine}점</b>, 최선은 <b>${max}점</b>입니다. ${
+        esc(q.gapNote || q.choices[bestIdx].why || '최선 선택지의 해설을 확인해 주세요.')}`;
+
+  $('#qFeedback').innerHTML = `
+    <div class="spectrum">
+      <span class="eyebrow">판단 스펙트럼 · 0점에서 ${max}점까지</span>
+      <div class="spec-track"><div class="spec-inner">
+        <div class="spec-rail"></div>
+        ${same ? '' : `<div class="spec-mark best" style="left:${pos(max)}%">
+          <div class="dot"></div><span class="lb">최선 ${max}</span></div>`}
+        <div class="spec-mark me" style="left:${pos(mine)}%">
+          <div class="dot"></div><span class="lb">내 답 ${mine}</span></div>
+      </div></div>
+      <div class="spec-gap">${gap}</div>
+      ${q.explain ? `<div class="notice" style="margin-top:10px">${esc(q.explain)}</div>` : ''}
+    </div>`;
+}
+
+/* ---- 숫자형 ---- */
+function renderNumber(q, box) {
+  box.innerHTML = `
+    <div class="num-row">
+      <input id="numIn" type="text" inputmode="decimal" placeholder="숫자만" autocomplete="off">
+      ${q.unitLabel ? `<span class="unit-label">${esc(q.unitLabel)}</span>` : ''}
+      <button class="btn sm" id="numSubmit" style="margin-top:0">확인</button>
+    </div>
+    ${q.hint && RUN.mode === 'practice'
+      ? `<button class="hint-btn" id="hintBtn">계산 힌트 보기</button><div id="hintBox"></div>` : ''}`;
+  const send = () => answerNumber(q);
+  $('#numSubmit').addEventListener('click', send);
+  $('#numIn').addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+  $('#numIn').focus();
+  const hb = $('#hintBtn');
+  if (hb) hb.addEventListener('click', () => {
+    $('#hintBox').innerHTML = `<div class="hint-box">${esc(q.hint)}</div>`;
+    hb.remove();
+  });
+}
+
+function answerNumber(q) {
+  if (RUN.locked) return;
+  const raw = $('#numIn').value.replace(/,/g, '').trim();
+  const val = parseFloat(raw);
+  if (raw === '' || isNaN(val)) { toast('숫자를 입력해 주세요'); return; }
+  RUN.locked = true;
+  const ok = Math.abs(val - q.accept.value) <= q.accept.tolerance;
+  const score = ok ? q.maxScore : 0;
+  RUN.answers[q.id] = { type: 'number', value: val, score, max: q.maxScore };
+  $('#numIn').disabled = true; $('#numSubmit').disabled = true;
+  commitAuto(q, score);
+
+  if (RUN.mode === 'practice') {
+    $('#qFeedback').innerHTML = `
+      <div class="notice ${ok ? '' : 'bad'}" style="margin-top:16px">
+        ${ok ? '<b>맞았습니다.</b>' : `<b>정답은 ${q.accept.value}${q.unitLabel ? ' ' + esc(q.unitLabel) : ''} 입니다.</b>`}
+        ${q.explain ? ' ' + esc(q.explain) : ''}
+      </div>`;
+  }
+  nextFoot();
+}
+
+/* ---- 서술 / 미션 ---- */
+function renderFree(q, box) {
+  box.innerHTML = `
+    <textarea class="free-input" id="freeIn" placeholder="여기에 작성하세요"></textarea>
+    <div class="counter mono" id="cnt">0자</div>
+    ${Array.isArray(q.rubric) && q.rubric.length ? `
+      <div class="rubric">
+        <span class="eyebrow">채점 기준</span>
+        <ul>${q.rubric.map(r => `<li>${esc(r)}</li>`).join('')}</ul>
+      </div>` : ''}
+    <div class="notice" style="margin-top:12px">이 문항은 자동 채점되지 않고 평가자가 직접 읽습니다.</div>`;
+  const ta = $('#freeIn');
+  ta.addEventListener('input', () => {
+    $('#cnt').textContent = ta.value.trim().length + '자';
+  });
+  nextFoot(true);
+}
+
+function submitFree(q) {
+  const ta = $('#freeIn');
+  const text = ta.value.trim();
+  if (text.length < CONFIG.MIN_CHARS) {
+    toast(`${CONFIG.MIN_CHARS}자 이상 작성해 주세요 (현재 ${text.length}자)`);
+    return false;
+  }
+  RUN.answers[q.id] = { type: q.type, text, score: null, max: q.maxScore };
+  if (RUN.mode === 'practice') {
+    S.practice[q.id] = S.practice[q.id] || { best: 0, max: 0, tries: 0 };
+    S.practice[q.id].tries++;
+    bumpStreak(); saveState(); renderStats(); renderUnitList();
+  }
+  return true;
+}
+
+/* ---- 자동 채점 문항 반영 ---- */
+function commitAuto(q, score) {
+  if (RUN.mode !== 'practice') return;
+  const prev = S.practice[q.id];
+  const gained = Math.max(0, score - (prev ? prev.best : 0));
+  S.practice[q.id] = {
+    best: Math.max(score, prev ? prev.best : 0),
+    max: q.maxScore,
+    tries: (prev ? prev.tries : 0) + 1
+  };
+  S.xp += gained * CONFIG.XP_PER_POINT;
+  if (score < q.maxScore) {
+    if (!S.review.includes(q.id)) S.review.push(q.id);
+    if (CONFIG.HEARTS) RUN.hearts--;
+  } else {
+    S.review = S.review.filter(x => x !== q.id);
+  }
+  bumpStreak();
+  saveState();
+  renderStats();
+  renderUnitList();
+}
+
+/* ---- 다음 버튼 ---- */
+function nextFoot(freeMode) {
+  const q = RUN.queue[RUN.i];
+  const last = RUN.i === RUN.queue.length - 1;
+  const outOfHearts = RUN.mode === 'practice' && CONFIG.HEARTS && RUN.hearts <= 0;
+  const foot = $('#qFoot');
+
+  if (freeMode) {
+    foot.innerHTML = `<span class="note">최소 ${CONFIG.MIN_CHARS}자</span>
+      <span class="spacer"></span>
+      <button class="btn sm" id="nextBtn" style="margin-top:0">${last ? '마치기' : '다음 문항'}</button>`;
+    $('#nextBtn').addEventListener('click', () => { if (submitFree(q)) advance(); });
+    return;
+  }
+  if (outOfHearts) {
+    foot.innerHTML = `<span class="note">하트를 모두 썼어요. 해설을 확인하고 다시 시작해 보세요.</span>
+      <span class="spacer"></span>
+      <button class="btn sm" id="nextBtn" style="margin-top:0">단원으로</button>`;
+    $('#nextBtn').addEventListener('click', () => openUnit(RUN.unitId));
+    return;
+  }
+  foot.innerHTML = `<span class="spacer"></span>
+    <button class="btn sm" id="nextBtn" style="margin-top:0">${last ? '마치기' : '다음 문항'}</button>`;
+  $('#nextBtn').addEventListener('click', advance);
+}
+
+function advance() {
+  if (RUN.i === RUN.queue.length - 1) { finishRun(); return; }
+  RUN.i++; RUN.locked = false;
+  renderQuestion();
+}
+
+/* ============================================================================
+   9. 세션 종료
+   ========================================================================== */
+async function finishRun() {
+  const { unitId, mode, queue, answers, startedAt } = RUN;
+  const elapsed = Math.round((Date.now() - startedAt) / 1000);
+  const u = BANK.units.find(x => x.id === unitId);
+
+  if (mode === 'practice') {
+    const got = queue.reduce((a, q) => a + (answers[q.id]?.score || 0), 0);
+    const max = queue.filter(isAuto).reduce((a, q) => a + q.maxScore, 0);
+    RUN = null;
+    $('#stage').innerHTML = `
+      <div class="panel done-wrap">
+        <span class="eyebrow">연습 완료 · ${esc(u.title)}</span>
+        <h2>${max && got / max >= .8 ? '체크 모드에 들어갈 준비가 됐어요' : '한 번 더 돌려볼까요'}</h2>
+        <p class="lead">연습 결과는 평가에 반영되지 않아요.</p>
+        <div class="kv">
+          <div><div class="v mono">${got} / ${max}</div><div class="k">획득 점수</div></div>
+          <div><div class="v mono">${fmtTime(elapsed)}</div><div class="k">소요 시간</div></div>
+        </div>
+        ${renderTagProfile(queue, answers)}
+        <div class="foot">
+          <button class="btn quiet sm" id="againBtn" style="margin-top:0">다시 풀기</button>
+          <span class="spacer"></span>
+          <button class="btn sm" id="backBtn" style="margin-top:0">단원으로</button>
+        </div>
+      </div>`;
+    $('#againBtn').addEventListener('click', () => startRun(unitId, 'practice', qOfUnit(unitId, 'practice')));
+    $('#backBtn').addEventListener('click', () => openUnit(unitId));
+    return;
+  }
+
+  // ---- 체크 모드 제출 ----
+  const items = queue.map(q => {
+    const a = answers[q.id] || null;
+    return {
+      id: q.id, type: q.type, tags: q.tags, maxScore: q.maxScore,
+      answered: !!a,
+      choice: a && 'choice' in a ? a.choice : null,
+      value: a && 'value' in a ? a.value : null,
+      text: a && 'text' in a ? a.text : null,
+      score: a && typeof a.score === 'number' ? a.score : null
+    };
+  });
+  const autoQ = queue.filter(isAuto);
+  const payload = {
+    unit: unitId, unitTitle: u.title, bankVersion: BANK.version,
+    submittedAt: new Date().toISOString(), elapsedSec: elapsed,
+    auto: {
+      got: autoQ.reduce((a, q) => a + (answers[q.id]?.score || 0), 0),
+      max: autoQ.reduce((a, q) => a + q.maxScore, 0)
+    },
+    manualCount: queue.length - autoQ.length,
+    tagScores: tagAgg(queue, answers),
+    items
+  };
+
+  $('#stage').innerHTML = `<div class="panel"><div class="empty">
+    <span class="ic">⏳</span><p>제출하고 있어요</p></div></div>`;
+
+  let via = 'local';
+  try {
+    const r = await submitCheck(unitId, payload);
+    via = r.via;
+  } catch (e) {
+    $('#stage').innerHTML = `
+      <div class="panel">
+        <div class="notice bad"><b>제출에 실패했습니다.</b> ${esc(e.message)}</div>
+        <div class="notice" style="margin-top:10px">답안은 이 브라우저에 남아 있습니다. 아래 버튼으로 파일을 내려 담당자에게 전달해 주세요.</div>
+        <div class="foot"><button class="btn sm" id="dlBtn" style="margin-top:0">답안 파일 내려받기</button></div>
+      </div>`;
+    $('#dlBtn').addEventListener('click', async () => {
+      CONFIG.SYNC_URL = ''; await submitCheck(unitId, payload); toast('파일을 내려받았습니다');
+    });
+    S.check[unitId] = payload; saveState();
+    RUN = null; renderUnitList();
+    return;
+  }
+
+  S.check[unitId] = payload;
+  bumpStreak(); saveState(); renderStats(); renderUnitList();
+  RUN = null;
+
+  $('#stage').innerHTML = `
+    <div class="panel done-wrap">
+      <span class="eyebrow">체크 제출 완료 · ${esc(u.title)}</span>
+      <h2>제출됐습니다</h2>
+      <p class="lead">점수는 공개되지 않아요. 평가자가 확인한 뒤 면접에서 함께 이야기합니다.</p>
+      <div class="kv">
+        <div><div class="v mono">${items.filter(i => i.answered).length} / ${items.length}</div><div class="k">응답 문항</div></div>
+        <div><div class="v mono">${fmtTime(elapsed)}</div><div class="k">소요 시간</div></div>
+      </div>
+      ${via === 'download'
+        ? `<div class="notice warn"><b>서버가 연결되지 않아 파일로 내려받았습니다.</b> 내려받은 JSON 파일을 담당자에게 전달해 주세요.</div>`
+        : `<div class="notice">답안이 서버에 기록됐습니다.</div>`}
+      <div class="foot">
+        <span class="spacer"></span>
+        <button class="btn sm" id="backBtn" style="margin-top:0">단원 목록으로</button>
+      </div>
+    </div>`;
+  $('#backBtn').addEventListener('click', () => openUnit(unitId));
+}
+
+function showCheckResult(unitId) {
+  const c = S.check[unitId];
+  const u = BANK.units.find(x => x.id === unitId);
+  $('#stage').innerHTML = `
+    <div class="panel done-wrap">
+      <span class="eyebrow">제출 기록 · ${esc(u.title)}</span>
+      <h2>이미 제출한 단원입니다</h2>
+      <p class="lead">체크 모드는 재응시할 수 없어요. 연습 모드는 계속 열려 있습니다.</p>
+      <div class="kv">
+        <div><div class="v mono">${c.items.filter(i => i.answered).length} / ${c.items.length}</div><div class="k">응답 문항</div></div>
+        <div><div class="v mono">${fmtTime(c.elapsedSec)}</div><div class="k">소요 시간</div></div>
+      </div>
+      <div class="notice">제출 시각 ${esc(c.submittedAt.slice(0, 16).replace('T', ' '))}</div>
+      <div class="foot"><span class="spacer"></span>
+        <button class="btn sm" id="backBtn" style="margin-top:0">단원으로</button></div>
+    </div>`;
+  $('#backBtn').addEventListener('click', () => openUnit(unitId));
+}
+
+const fmtTime = s => `${Math.floor(s / 60)}분 ${String(s % 60).padStart(2, '0')}초`;
+
+/* ---- 태그별 집계 ---- */
+function tagAgg(queue, answers) {
+  const agg = {};
+  queue.filter(isAuto).forEach(q => {
+    const sc = answers[q.id]?.score || 0;
+    q.tags.forEach(t => {
+      agg[t] = agg[t] || { got: 0, max: 0 };
+      agg[t].got += sc; agg[t].max += q.maxScore;
+    });
+  });
+  return agg;
+}
+
+function renderTagProfile(queue, answers) {
+  const agg = tagAgg(queue, answers);
+  const rows = Object.entries(agg).filter(([, v]) => v.max > 0)
+    .sort((a, b) => (a[1].got / a[1].max) - (b[1].got / b[1].max));
+  if (!rows.length) return '';
+  return `<div style="margin-bottom:18px">
+    <span class="eyebrow" style="display:block;margin-bottom:6px">역량 태그별 획득률</span>
+    ${rows.map(([t, v]) => {
+      const pc = Math.round(v.got / v.max * 100);
+      const col = pc >= 85 ? 'var(--s3)' : pc >= 60 ? 'var(--s2)' : pc >= 35 ? 'var(--s1)' : 'var(--s0)';
+      return `<div class="tagrow">
+        <span class="nm">${esc(t)}</span>
+        <span class="tr"><i style="width:${pc}%;background:${col}"></i></span>
+        <span class="pc mono">${pc}%</span></div>`;
+    }).join('')}
+  </div>`;
+}
+
+/* ============================================================================
+   10. 복습함
+   ========================================================================== */
+function openReview() {
+  const qs = S.review.map(id => BANK.questions.find(q => q.id === id)).filter(Boolean);
+  if (!qs.length) { toast('복습할 문항이 없습니다'); return; }
+  CUR_UNIT = null; renderUnitList();
+  $('#stage').innerHTML = `
+    <div class="panel">
+      <span class="eyebrow">복습함</span>
+      <h2 style="font-size:22px;font-weight:800;letter-spacing:-.03em;margin:2px 0 6px">
+        최선에 닿지 못한 ${qs.length}문항</h2>
+      <p style="color:var(--muted);font-size:13px;margin:0 0 18px">
+        틀린 문항만이 아니라, 차선을 고른 문항도 함께 담깁니다. 만점을 받으면 자동으로 빠져요.</p>
+      <div class="unit-list">
+        ${qs.map(q => {
+          const r = S.practice[q.id];
+          const s = Math.min(r ? r.best : 0, 3);
+          return `<div class="unit-btn" style="cursor:default">
+            <div class="row">
+              <span class="score-chip sc-${s}" style="margin-top:0">${r ? r.best : 0}/${q.maxScore}</span>
+              <span class="nm" style="font-weight:500;font-size:13px">${esc(q.prompt.slice(0, 70))}${q.prompt.length > 70 ? '…' : ''}</span>
+            </div>
+            <div class="sub">${TYPE_LABEL[q.type]} · ${esc(q.tags.join(', ') || '태그 없음')}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="foot">
+        <span class="spacer"></span>
+        <button class="btn sm" id="reviewRun" style="margin-top:0">${qs.length}문항 다시 풀기</button>
+      </div>
+    </div>`;
+  $('#reviewRun').addEventListener('click', () => startRun(qs[0].unit, 'practice', qs));
+}
+
+/* ============================================================================
+   11. 개발자 검증 패널  ( URL 에 ?dev=1 )
+   ========================================================================== */
+function renderDev() {
+  const byUnit = BANK.units.map(u => {
+    const p = qOfUnit(u.id, 'practice').length, c = qOfUnit(u.id, 'check').length;
+    return `  ${u.id.padEnd(22)} 연습 ${String(p).padStart(3)}  체크 ${String(c).padStart(3)}`;
+  }).join('\n');
+  const orphan = BANK.questions.filter(q => !q.tags.length).map(q => q.id);
+  $('#devPanel').classList.remove('hidden');
+  $('#devPanel').innerHTML = `
+    <div class="panel">
+      <span class="eyebrow">문항 뱅크 검증 · version ${esc(BANK.version)}</span>
+      <pre>단원 ${BANK.units.length}개 / 문항 ${BANK.questions.length}개
+${byUnit}
+
+스키마 오류 ${BANK_ERRORS.length}건${BANK_ERRORS.length ? '\n' + BANK_ERRORS.map(e => '  ✗ ' + e).join('\n') : ''}
+태그 없는 문항 ${orphan.length}건${orphan.length ? '\n  ' + orphan.join(', ') : ''}
+저장소 ${store.persistent ? 'localStorage 사용 가능' : '메모리 전용 — 새로고침 시 초기화'}
+서버 ${CONFIG.SYNC_URL || '(미설정 · 제출은 파일 다운로드)'}
+토큰 ${CONFIG.ACCESS_TOKEN ? '설정됨' : '미설정'}${SYNC_BLOCKED ? '\n거부 ' + SYNC_BLOCKED : ''}</pre>
+      <div class="foot" style="margin-top:14px">
+        <button class="btn quiet sm" id="pingBtn" style="margin-top:0">서버 연결 테스트</button>
+        <span class="note mono" id="pingOut"></span>
+      </div>
+    </div>`;
+  $('#pingBtn').addEventListener('click', testServer);
+}
+
+/* 배포한 Apps Script 웹앱이 실제로 응답하는지 3단계로 확인합니다 */
+async function testServer() {
+  const out = $('#pingOut');
+  if (!CONFIG.SYNC_URL) {
+    out.textContent = 'CONFIG.SYNC_URL 이 비어 있습니다';
+    return;
+  }
+  const log = [];
+  const say = () => { out.innerHTML = log.join('<br>'); };
+  out.textContent = '확인 중…';
+
+  try {
+    const r = await fetch(CONFIG.SYNC_URL + '?action=ping');
+    const ct = r.headers.get('content-type') || '';
+    if (ct.indexOf('json') === -1) {
+      log.push('① JSON 대신 HTML 응답 — 액세스 권한이 "모든 사용자"가 아닙니다');
+      say(); return;
+    }
+    const j = await r.json();
+    log.push(j && j.ok ? '① 응답 확인 OK' : '① 응답했지만 ok=false');
+  } catch (e) {
+    log.push('① 연결 실패 — 배포 시 액세스 권한을 "모든 사용자"로 설정했는지, 새 버전으로 재배포했는지 확인하세요');
+    say(); return;
+  }
+  say();
+
+  const probe = '__connection_test__';
+  try {
+    const r = await fetch(CONFIG.SYNC_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'save', name: probe, token: CONFIG.ACCESS_TOKEN,
+        state: { xp: 1, practice: {}, check: {}, review: [] }
+      })
+    });
+    const j = await r.json();
+    log.push(j && j.ok ? '② 쓰기 OK'
+      : '② 쓰기 거부 — ' + ((j && j.error) || 'SHEET_ID 를 확인하세요')
+        + (j && j.error && j.error.indexOf('등록되지') === 0
+            ? ' (ROSTER_GATE 가 켜져 있으면 이 테스트는 거부됩니다. 정상입니다.)' : ''));
+  } catch (e) {
+    log.push('② 쓰기 실패 — ' + e.message);
+    say(); return;
+  }
+  say();
+
+  try {
+    const r = await fetch(CONFIG.SYNC_URL + '?action=load&name=' + encodeURIComponent(probe) + tokenParam());
+    const j = await r.json();
+    log.push(j && j.state && j.state.xp === 1
+      ? '③ 읽기 OK — 서버 연결이 정상입니다'
+      : '③ 읽기했지만 저장된 값이 없습니다 — 스프레드시트 progress 시트를 확인하세요');
+  } catch (e) {
+    log.push('③ 읽기 실패 — ' + e.message);
+  }
+  say();
+}
+
+/* ============================================================================
+   12. 부트
+   ========================================================================== */
+async function boot(name) {
+  const remote = await syncLoad(name);
+  const local = store.get(KEY(name));
+  let st = remote || (local ? JSON.parse(local) : null) || blankState(name);
+  // 서버·로컬 병합: 더 많이 푼 쪽을 채택
+  if (remote && local) {
+    const l = JSON.parse(local);
+    if (Object.keys(l.practice).length > Object.keys(remote.practice || {}).length) st = l;
+  }
+  st.name = name;
+  st.practice = st.practice || {}; st.check = st.check || {}; st.review = st.review || [];
+  S = st;
+  bumpStreak(); saveState();
+
+  $('#gate').classList.add('hidden');
+  $('#shell').classList.remove('hidden');
+  $('#tbWho').textContent = name;
+  renderStats(); renderUnitList();
+
+  const firstOpen = BANK.units.find(u => qOfUnit(u.id, 'practice').length || qOfUnit(u.id, 'check').length);
+  if (firstOpen) openUnit(firstOpen.id);
+  else $('#stage').innerHTML = `<div class="panel"><div class="empty">
+      <span class="ic">📄</span><p>아직 등록된 문항이 없습니다</p>
+      <small>questions.json 에 단원과 문항을 추가하면 여기에 바로 나타납니다.<br>
+      형태는 questions.example.json 을 참고하세요.</small></div></div>`;
+
+  if (new URLSearchParams(location.search).get('dev') === '1') renderDev();
+  if (!store.persistent) toast('이 브라우저는 저장을 막고 있어요. 기록이 유지되지 않습니다.');
+  if (SYNC_BLOCKED) toast('서버 저장이 거부됐어요: ' + SYNC_BLOCKED);
+}
+
+let gateBusy = false;
+
+async function tryEnter() {
+  if (gateBusy) return;
+  const raw = $('#nameInput').value.trim();
+  const err = $('#gateErr');
+
+  if (raw.length < 2) { err.innerHTML = '이름을 두 글자 이상 입력해 주세요.'; return; }
+
+  gateBusy = true;
+  const btn = $('#startBtn');
+  const label = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '확인 중…';
+  err.textContent = '';
+
+  const res = await verifyName(raw);
+
+  if (!res.ok) {
+    err.innerHTML = res.reason === 'html'
+      ? '<b>서버 설정이 완료되지 않았습니다.</b><br>담당자에게 알려주세요.'
+      : '<b>서버에 연결할 수 없습니다.</b><br>잠시 후 다시 시도해 주세요.';
+    btn.disabled = false; btn.textContent = label; gateBusy = false;
+    return;
+  }
+  if (!res.allowed) {
+    err.innerHTML = '<b>등록되지 않은 이름입니다.</b><br>이름을 정확히 입력했는지 확인해 주세요. 계속 안 되면 담당자에게 문의해 주세요.';
+    btn.disabled = false; btn.textContent = label; gateBusy = false;
+    return;
+  }
+
+  if (BANK_ERRORS.length) {
+    err.textContent = `문항 데이터에 오류가 ${BANK_ERRORS.length}건 있습니다. 담당자에게 알려주세요.`;
+  }
+  store.set('tl:last', res.name);
+  await boot(res.name);
+  btn.disabled = false; btn.textContent = label; gateBusy = false;
+}
+
+$('#startBtn').addEventListener('click', tryEnter);
+$('#nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') tryEnter(); });
+$('#nameInput').addEventListener('input', () => { $('#gateErr').textContent = ''; });
+$('#logoutBtn').addEventListener('click', () => {
+  if (!confirm('나가면 이 화면이 닫혀요. 기록은 이름으로 남아 있습니다.')) return;
+  location.reload();
+});
+$('#reviewBtn').addEventListener('click', openReview);
+
+(async () => {
+  await loadConfig();
+  try {
+    await loadBank();
+  } catch (e) {
+    $('#gateErr').textContent = e.message;
+    return;
+  }
+  const last = store.get('tl:last');
+  if (last) $('#nameInput').value = last;
+  $('#nameInput').focus();
+})();
+</script>
+</body>
+</html>
