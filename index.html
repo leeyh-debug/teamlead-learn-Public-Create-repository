@@ -262,9 +262,13 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:fo
 .cols{ display:grid; grid-template-columns:472px 1fr; gap:22px; align-items:start; }
 @media (max-width:860px){
   .cols{ grid-template-columns:1fr; }
-  .cols > aside{ order:2; }
-  .cols > #stage{ order:1; }
+  /* aside 를 껍데기만 남겨 그 안의 두 패널을 각각 배치합니다 */
+  .cols > aside{ display:contents; }
+  .me-panel{ order:1; }          /* 프로필·닉네임이 맨 위 */
+  .cols > #stage{ order:2; }     /* 그다음 문제 화면 */
+  .panel.units{ order:3; margin-top:0; }
 }
+
 /* 좁은 화면에서는 상단바를 이름·정확도까지 다 밀어넣지 않습니다 */
 /* 상단바 항목을 폭에 따라 단계적으로 접습니다 */
 .topbar > *{ min-width:0; }
@@ -319,10 +323,11 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:fo
 .me-panel{ padding-top:18px; }
 .me-head{ display:flex; align-items:center; gap:12px; margin-bottom:14px; }
 .me-face{
-  flex:none; width:52px; height:52px; border-radius:16px; display:grid; place-items:center;
-  background:#EEF2F8; background:var(--u14);
-  box-shadow:inset 0 0 0 1px var(--u22);
+  flex:none; width:58px; height:58px; border-radius:17px; display:grid; place-items:center;
+  background:#FFFFFF;
+  box-shadow:inset 0 0 0 1.5px var(--u22), 0 1px 3px rgba(14,27,46,.07);
 }
+.avatar{ overflow:visible; }
 .me-face .avatar{ display:block; }
 /* 눌러서 캐릭터를 바꿉니다 */
 button.me-face{
@@ -337,6 +342,11 @@ button.me-face::after{
   box-shadow:0 0 0 2px var(--card);
 }
 .me-animal .chg{ color:var(--bx-blue); font-weight:700; }
+.me-since{
+  display:block; margin-top:3px; font-size:12px; font-weight:600; color:var(--muted-2);
+  font-family:var(--mono); letter-spacing:-.01em;
+}
+.me-since b{ color:var(--u); font-weight:700; }
 
 /* 프로필 캐릭터 고르기 */
 .avmodal{
@@ -364,10 +374,91 @@ button.me-face::after{
 .avopt:hover{ transform:translateY(-1px); border-color:var(--bx-blue); }
 .avopt[aria-pressed="true"]{ border-color:var(--bx-blue); background:#EAF2FF; }
 .avopt[aria-pressed="true"] span{ color:var(--bx-blue); }
+/* 복습함 — 재확인 예정 · 오답 메모 */
+/* 정리 노트 · 검색 */
+.srch-wrap{ display:flex; gap:8px; margin-top:16px; }
+.srch-wrap input{
+  flex:1; min-width:0; font:inherit; font-size:15px; padding:11px 14px;
+  border:1.5px solid var(--line); border-radius:12px; background:var(--card); color:var(--ink);
+}
+.srch-wrap input:focus{ outline:none; border-color:var(--bx-blue); }
+.srch-card{
+  border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:9px;
+  background:var(--card);
+}
+.srch-card.mine{ border-left:4px solid var(--bx-blue); }
+.srch-top{ display:flex; align-items:center; gap:8px; margin-bottom:7px; }
+.srch-q{ font-size:14.5px; font-weight:700; letter-spacing:-.02em; line-height:1.5; }
+.srch-ex{ font-size:13.5px; color:var(--muted); line-height:1.6; margin-top:6px; }
+.srch-foot{ display:flex; align-items:center; gap:8px; margin-top:9px; }
+.mynote{
+  margin-top:8px; padding:9px 11px; border-radius:10px; background:#EAF2FF;
+  font-size:13.5px; line-height:1.6; color:#16294A; white-space:pre-wrap;
+}
+.sumwrap{ margin-bottom:10px; }
+.sumtitle{ font-size:13px; font-weight:800; color:var(--u); letter-spacing:-.02em; }
+.sumwrap .sumbox{ margin-top:5px; }
+
+/* 핵심 정리 블록 */
+.sumbox{
+  margin-top:14px; border:1.5px solid var(--u22); border-radius:14px;
+  background:var(--u08, #F8FAFC); overflow:hidden;
+}
+.sumbox > summary{
+  cursor:pointer; padding:12px 14px; font-size:14px; display:flex; align-items:center; gap:9px;
+  list-style:none;
+}
+.sumbox > summary::-webkit-details-marker{ display:none; }
+.sumbox > summary::after{ content:'▾'; margin-left:auto; color:var(--muted-2); font-size:12px; }
+.sumbox[open] > summary::after{ content:'▴'; }
+.sumbox > summary b{ font-weight:800; letter-spacing:-.02em; color:var(--u); }
+.sumbox > summary span{ font-size:12px; font-weight:600; color:var(--muted-2); }
+.sumbox ul{ margin:0; padding:2px 16px 12px 32px; }
+.sumbox li{ font-size:14px; line-height:1.62; color:var(--ink); margin:7px 0; }
+.sumbox li b{ font-weight:800; color:var(--u); }
+.sumtrap{
+  margin:0 12px 12px; padding:10px 12px; border-radius:11px;
+  background:#FFF7ED; border:1px solid #F5D9B8; font-size:13.5px; line-height:1.6; color:#7A4A12;
+}
+.sumtrap b{ font-weight:800; }
+
+.weaklist{ display:flex; flex-wrap:wrap; gap:7px; margin-top:9px; }
+.tagdrill{
+  flex:none; font-size:11.5px; font-weight:700; padding:4px 9px; border-radius:100px;
+  border:1.5px solid var(--bx-blue); background:#EAF2FF; color:var(--bx-blue); cursor:pointer;
+}
+.tagdrill:hover{ background:var(--bx-blue); color:#fff; }
+.rv-due{
+  font-size:11px; font-weight:700; padding:2px 7px; border-radius:100px;
+  background:#EEF2F7; color:var(--muted); font-family:var(--mono);
+}
+.rv-due.now{ background:#FFF1E8; color:#C4571A; }
+.rv-note{ margin-top:9px; border-top:1px dashed var(--line); padding-top:9px; }
+.rv-note label{ display:block; font-size:12px; font-weight:700; color:var(--ink); margin-bottom:5px; }
+.rv-note label span{ font-weight:600; color:var(--muted-2); }
+.rv-note textarea{
+  width:100%; box-sizing:border-box; resize:vertical; font:inherit; font-size:13.5px;
+  padding:8px 10px; border:1.5px solid var(--line); border-radius:10px; background:var(--card);
+  color:var(--ink); line-height:1.5;
+}
+.rv-note textarea:focus{ outline:none; border-color:var(--bx-blue); }
+
+.avnav-row{ display:flex; align-items:center; justify-content:center; gap:14px; margin-top:14px; }
+.avnav{
+  width:38px; height:38px; border-radius:100px; border:1.5px solid var(--line);
+  background:var(--card); color:var(--ink); font-size:20px; line-height:1; cursor:pointer;
+}
+.avnav:disabled{ opacity:.32; cursor:default; }
+.avdots{ display:flex; gap:7px; }
+.avdots i{ width:7px; height:7px; border-radius:100px; background:#CBD5E1; display:block; }
+.avdots i.on{ background:var(--bx-blue); width:20px; }
 .me-id{ display:flex; flex-direction:column; min-width:0; }
 .me-name{ font-size:17px; font-weight:800; letter-spacing:-.03em; }
 .me-animal{ font-size:12.5px; color:var(--muted); font-weight:600; margin-top:1px; }
-.tb-face{ flex:none; display:grid; place-items:center; width:30px; height:30px; }
+.tb-face{
+  flex:none; display:grid; place-items:center; width:34px; height:34px;
+  background:#fff; border-radius:11px; box-shadow:0 0 0 1px rgba(255,255,255,.35);
+}
 
 /* 이사님 말씀 — CI 톤으로 */
 .motto{
@@ -417,6 +508,27 @@ button.me-face::after{
 .stat.s-streak .v{ color:#A9541A; } .stat.s-streak .k{ color:#96603A; }
 .stat.s-acc{    background:#F2EDFA; border-color:#D9CDEF; }
 .stat.s-acc .v{ color:#5A3E9E; } .stat.s-acc .k{ color:#6D579C; }
+
+/* 좁은 화면 — 프로필 카드를 눌러 담아 문제 화면이 너무 밀리지 않게 합니다.
+   (.stat-grid 기본값보다 뒤에 있어야 적용됩니다) */
+@media (max-width:860px){
+  .me-panel{ padding:15px 14px; }
+  .me-head{ margin-bottom:11px; gap:11px; }
+  .me-face{ width:50px; height:50px; border-radius:14px; }
+  .me-name{ font-size:16.5px; }
+  .me-animal{ font-size:12px; }
+  .motto{ padding:10px 12px 9px; margin-bottom:11px; }
+  .motto p{ font-size:12.5px; line-height:1.5; }
+  .motto-by{ font-size:11.5px; }
+  .me-panel .stat-grid{ grid-template-columns:repeat(4,1fr); gap:6px; }
+  .me-panel .stat{ padding:9px 4px; text-align:center; }
+  .me-panel .stat .v{ font-size:17px; }
+  .me-panel .stat .k{ font-size:10.5px; margin-top:1px; }
+  #reviewBtn{ margin-top:10px !important; }
+}
+@media (max-width:360px){
+  .me-panel .stat-grid{ grid-template-columns:1fr 1fr; }
+}
 
 /* ---------- 단원 목록 ---------- */
 .unit-list{ display:grid; grid-template-columns:1fr 1fr; gap:9px; }
@@ -934,6 +1046,25 @@ details.prev[open] summary{ border-bottom:1px solid var(--line); }
   background:var(--ink); color:#fff; font-size:13px; padding:11px 18px;
   border-radius:100px; z-index:80; box-shadow:0 8px 24px rgba(14,27,46,.28);
 }
+/* ---------- 휴대폰 전용: 문제 풀이 전용 화면 ----------
+   문제를 시작하면 문제만 화면 가득 띄웁니다. 프로필·단원 목록이 위아래에 있어
+   문항마다 스크롤을 올려야 하던 번거로움을 없앱니다. 넓은 화면은 그대로입니다. */
+@media (max-width:860px){
+  body.solo{ overflow:hidden; }
+  body.solo .topbar,
+  body.solo .creed-band,
+  body.solo .me-panel,
+  body.solo .panel.units{ display:none !important; }
+  body.solo .wrap{ padding:0; max-width:none; }
+  body.solo #stage{
+    position:fixed; inset:0; z-index:48; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    background:var(--bg);
+    padding:calc(10px + env(safe-area-inset-top)) 12px calc(22px + env(safe-area-inset-bottom));
+  }
+  body.solo .runner{ border-radius:16px; }
+  body.solo .runner-bar{ position:sticky; top:0; z-index:2; }
+}
+
 @media (prefers-reduced-motion:reduce){ *{ transition:none !important; animation:none !important; } }
 </style>
 </head>
@@ -1001,6 +1132,7 @@ details.prev[open] summary{ border-bottom:1px solid var(--line); }
             <div class="me-id">
               <span class="me-name" id="meName"></span>
               <span class="me-animal" id="meAnimal"></span>
+              <span class="me-since" id="meSince"></span>
             </div>
           </div>
           <div class="motto">
@@ -1014,7 +1146,9 @@ details.prev[open] summary{ border-bottom:1px solid var(--line); }
             <div class="stat s-streak"><div class="v mono" id="stStreak">0</div><div class="k">학습한 날</div></div>
             <div class="stat s-acc"><div class="v mono" id="stAcc">—</div><div class="k">평균 획득률</div></div>
           </div>
-          <button class="btn quiet sm" id="reviewBtn" style="width:100%;margin-top:13px">복습함 (0)</button>
+          <button class="btn sm" id="todayBtn" style="width:100%;margin-top:13px">오늘의 학습</button>
+          <button class="btn quiet sm" id="reviewBtn" style="width:100%;margin-top:8px">복습함 (0)</button>
+          <button class="btn quiet sm" id="noteBtn" style="width:100%;margin-top:8px">정리 노트 · 검색</button>
           <button class="btn sm admin-btn hidden" id="adminBtn" style="width:100%;margin-top:8px">교육 대상 진행 확인</button>
         </div>
         <div class="panel units">
@@ -1044,6 +1178,7 @@ details.prev[open] summary{ border-bottom:1px solid var(--line); }
         <button class="ghost-btn" id="avClose">닫기</button>
       </div>
       <div class="avgrid" id="avGrid"></div>
+      <div class="avnav-row" id="avNav"></div>
     </div>
   </div>
 </div>
@@ -1090,12 +1225,32 @@ const CONFIG = {
 async function loadConfig() {
   try {
     const r = await fetch('config.json?v=' + Date.now(), { cache: 'no-store' });
-    if (!r.ok) return;
-    const j = await r.json();
-    ['SYNC_URL', 'ACCESS_TOKEN'].forEach(k => {
-      if (typeof j[k] === 'string') CONFIG[k] = j[k].trim();
-    });
+    if (r.ok) {
+      const j = await r.json();
+      ['SYNC_URL', 'ACCESS_TOKEN'].forEach(k => {
+        if (typeof j[k] === 'string') CONFIG[k] = j[k].trim();
+      });
+    }
   } catch (e) { /* 파일이 없으면 그냥 넘어갑니다 */ }
+
+  /* 주소 뒤에 ?sync=... 를 붙이면 그 서버 주소를 쓰고 이 기기에 기억합니다.
+     호스팅을 옮기는 중이거나 config.json 을 아직 못 고쳤을 때 쓰는 우회로입니다.
+     예) https(생략)/index.html?sync=https://script.google.com/macros/s/.../exec */
+  try {
+    const qs = new URLSearchParams(location.search);
+    const fromUrl = (qs.get('sync') || '').trim();
+    if (fromUrl && /^https:\/\/script\.google\.com\//.test(fromUrl)) {
+      CONFIG.SYNC_URL = fromUrl;
+      store.set('tl:sync', fromUrl);
+      const tk = (qs.get('token') || '').trim();
+      if (tk) { CONFIG.ACCESS_TOKEN = tk; store.set('tl:token', tk); }
+    } else {
+      const saved = store.get('tl:sync') || '';
+      if (!CONFIG.SYNC_URL && saved) CONFIG.SYNC_URL = saved;
+      const st = store.get('tl:token') || '';
+      if (!CONFIG.ACCESS_TOKEN && st) CONFIG.ACCESS_TOKEN = st;
+    }
+  } catch (e) { /* 무시 */ }
 }
 
 /* ============================================================================
@@ -1126,7 +1281,12 @@ let RUN = null;        // 실행 중 세션
 function blankState(name) {
   return {
     name, xp: 0, days: [], lastDay: null,
-    avatar: null,   // 본인이 고른 프로필 캐릭터 (없으면 이름으로 자동 배정)
+    avatar: null,      // 본인이 고른 프로필 캐릭터 (없으면 이름으로 자동 배정)
+    startedOn: todayStr(), // 교육 시작일 — 처음 입장한 날. 기록에 저장돼 기기를 바꿔도 유지됩니다
+    notes: {},   // 오답 메모 { 문항id: '왜 틀렸는지' }
+    due: {},     // 재확인 예정일 { 문항id: 'YYYY-MM-DD' }
+    reps: {},    // 맞힌 횟수 { 문항id: 0~2 } — 간격 복습에 씁니다
+    easyFirst: true, // 연습 순서: 쉬운 문항부터
     practice: {},   // qid -> { best, max, tries }
     check: {},      // unitId -> { best, attempts, last:{...} }  확인 테스트 기록
     review: [],     // qid 목록
@@ -1138,6 +1298,13 @@ function blankState(name) {
 }
 
 const todayStr = () => new Date().toISOString().slice(0, 10);
+const addDays = (ymd, n) => {
+  const t = new Date(ymd + 'T00:00:00');
+  t.setDate(t.getDate() + n);
+  return t.toISOString().slice(0, 10);
+};
+/* 오늘 다시 볼 문항 (예정일이 오늘이거나 지난 것) */
+const dueList = () => (S.review || []).filter(id => (S.due[id] || todayStr()) <= todayStr());
 
 /* 학습한 날짜를 모아둡니다. 연속이 아니어도 세어집니다. */
 function bumpStreak() {
@@ -1415,50 +1582,91 @@ const AVATAR_MAP = {
   '182': 'dog',    '10013': 'sheep',  '28172': 'chick',
   '62765': 'hamster','3755': 'deer',  '67': 'husky',
   '30260': 'fox',  '54394': 'panda',  '27100': 'raccoon',
+  // 추가 인원 — 해시 폴백이 위 배정과 겹쳐서 따로 지정합니다
+  '5624': 'tiger', '97492': 'koala',  '3024': 'cat',
 };
-const AVATAR_ORDER = ['dog','sheep','chick','hamster','deer','husky','fox','panda','raccoon','tiger','koala','pig'];
 
 /* 동물별 색과 부위 정의 */
 const ANIMALS = {
-  dog:     { name:'강아지', head:'#C08A5E', ear:'floppy', earFill:'#8A5334', muzzle:'#FAEFE2', nose:'#4A3A2E', tongue:true },
-  sheep:   { name:'양',     head:'#EFE2D2', ear:'side',   earFill:'#D9C6B2', wool:true,  nose:'#5A4636' },
-  chick:   { name:'병아리', head:'#F7CE46', ear:'none',   earFill:'#F7CE46', comb:true,  beak:'#F09134' },
-  hamster: { name:'햄스터', head:'#AFB4BA', ear:'round',  earFill:'#F0C3C6', muzzle:'#C6CAD0', nose:'#4A4A4A', teeth:true },
-  deer:    { name:'사슴',   head:'#E3B187', ear:'side',   earFill:'#C48F63', antler:true, nose:'#4A3A2E' },
-  husky:   { name:'허스키', head:'#3E4650', ear:'pointed',earFill:'#2C333B', mask:'#FBFCFD', tongue:true, nose:'#33393F' },
-  fox:     { name:'여우',   head:'#EE7B3C', ear:'pointed',earFill:'#C85A22', mask:'#FDFDFD', nose:'#4A3A2E' },
-  panda:   { name:'판다',   head:'#FBFCFD', ear:'round',  earFill:'#333A42', patch:'#333A42', nose:'#333A42' },
-  raccoon: { name:'라쿤',   head:'#9AA1A8', ear:'round',  earFill:'#7A8189', band:true, nose:'#3E444A' },
-  tiger:   { name:'호랑이', head:'#F0A03C', ear:'round',  earFill:'#D07A22', stripe:true, muzzle:'#FDF3E6', nose:'#4A3A2E' },
-  koala:   { name:'코알라', head:'#A6ADB4', ear:'big',    earFill:'#C9CED3', nose:'#4A4A4A', bigNose:true },
-  pig:     { name:'돼지',   head:'#F0AEB8', ear:'pointed',earFill:'#D98A97', snout:'#E890A0', nose:'#B96A79' },
-};
+  /* head 얼굴색 · line 윤곽선(작은 화면에서 형태가 뭉개지지 않게 반드시 넣습니다)
+     색이 옅으면 휴대폰에서 바래 보이므로 채도를 올리고 윤곽을 둘렀습니다. */
+  dog:     { name:'강아지',     head:'#C0834B', line:'#7A4A22', ear:'floppy',  earFill:'#9A6231',
+             muzzle:'#FBF1E4', nose:'#3E3128', tongue:true },
+  sheep:   { name:'양',         head:'#EFE0CB', line:'#B99C79', ear:'side',    earFill:'#CFB491',
+             wool:true, nose:'#5A4636' },
+  chick:   { name:'병아리',     head:'#F9C61F', line:'#C98C05', ear:'none',    earFill:'#F9C61F',
+             comb:true, beak:'#F07E1E' },
+  hamster: { name:'햄스터',     head:'#A9B0B8', line:'#666E77', ear:'round',   earFill:'#F1B8BC',
+             muzzle:'#D3D8DD', nose:'#3E4249', teeth:true },
+  deer:    { name:'사슴',       head:'#DFA469', line:'#9C6631', ear:'side',    earFill:'#BE854F',
+             antler:true, nose:'#3E3128' },
+  husky:   { name:'허스키',     head:'#3B434E', line:'#1E242C', ear:'pointed', earFill:'#2A313A',
+             mask:'#FBFCFD', tongue:true, nose:'#2B3037' },
+  fox:     { name:'여우',       head:'#F07622', line:'#AC470D', ear:'pointed', earFill:'#C8500F',
+             mask:'#FDFDFD', nose:'#3E3128' },
+  panda:   { name:'판다',       head:'#FFFFFF', line:'#333A42', ear:'round',   earFill:'#2B3138',
+             patch:'#2B3138', nose:'#2B3138' },
+  raccoon: { name:'라쿤',       head:'#98A0A8', line:'#5A626A', ear:'round',   earFill:'#6E767E',
+             band:true, nose:'#31363C' },
+  tiger:   { name:'호랑이',     head:'#F59A1E', line:'#AE6208', ear:'round',   earFill:'#CE7A12',
+             stripe:true, muzzle:'#FDF1DE', nose:'#3E3128' },
+  koala:   { name:'코알라',     head:'#9EA6AE', line:'#636B73', ear:'big',     earFill:'#C3C9CF',
+             nose:'#3E4249', bigNose:true },
+  pig:     { name:'돼지',       head:'#F2A2AE', line:'#C36E7D', ear:'pointed', earFill:'#D8828F',
+             snout:'#E88A9A', nose:'#AE5E6D' },
 
+  /* ---- 추가 캐릭터 ---- */
+  cat:     { name:'검은 고양이', head:'#1E222A', line:'#05070A', ear:'cat',    earFill:'#1E222A',
+             innerEar:'#4E6B7C', eyes:'big', eyeFill:'#F5C518', whiskers:'#E8EDF2',
+             nose:'#C9808C', rim:'#39414C' },
+  catdoll: { name:'까망 인형',   head:'#39404B', line:'#171B21', ear:'catRound', earFill:'#39404B',
+             innerEar:'#6E7C8A', eyes:'big', eyeFill:'#F3CA4A', bigPupil:true,
+             nose:'#1A1D22', rim:'#5C6673', chubby:true, fuzz:true },
+  puppy:   { name:'흰 강아지',   head:'#FFFFFF', line:'#23272C', lw:3.2, ear:'none',
+             earFront:'floppy', earFill:'#FFFFFF', eyes:'dot', nose:'#23272C', simpleMouth:true },
+  tanuki:  { name:'너구리',      head:'#FBF0DC', line:'#9C7A52', ear:'round',  earFill:'#6B4A2E',
+             innerEar:'#C98F63', goggles:'#7A5535', nose:'#4A3524', muzzle:'#FFFAF0' },
+};
+const AVATAR_ORDER = ['dog','sheep','chick','hamster','deer','husky','fox','panda',
+                      'raccoon','tiger','koala','pig','cat','catdoll','puppy','tanuki'];
+
+/* 이름 → 고정 해시 (실명을 파일에 남기지 않기 위한 방식) */
 function nameHash(name) {
-  const key = String(name || '').trim();
+  const t = String(name || '').replace(/\s+/g, '');
   let h = 0;
-  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) % 100000;
+  for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) % 100000;
   return String(h);
 }
+/* 첫 배정 캐릭터 — 명단에 있으면 지정값, 없으면 해시로 고르게 나눕니다 */
 function animalFor(name) {
   const h = nameHash(name);
   return AVATAR_MAP[h] || AVATAR_ORDER[Number(h) % AVATAR_ORDER.length];
 }
 
-/* 귀 모양 */
 function ears(a) {
-  const f = a.earFill;
+  const f = a.earFill, st = `stroke="${a.line}" stroke-width="${a.lw || 2.4}"`;
   switch (a.ear) {
-    case 'floppy':  return `<ellipse cx="13" cy="36" rx="10" ry="16" fill="${f}"/>
-                            <ellipse cx="67" cy="36" rx="10" ry="16" fill="${f}"/>`;
-    case 'pointed': return `<path d="M14 34 L20 8 L38 22 Z" fill="${f}"/>
-                            <path d="M66 34 L60 8 L42 22 Z" fill="${f}"/>`;
-    case 'round':   return `<circle cx="19" cy="22" r="11" fill="${f}"/>
-                            <circle cx="61" cy="22" r="11" fill="${f}"/>`;
-    case 'big':     return `<circle cx="14" cy="28" r="14" fill="${f}"/>
-                            <circle cx="66" cy="28" r="14" fill="${f}"/>`;
-    case 'side':    return `<ellipse cx="8" cy="40" rx="11" ry="6.5" fill="${f}"/>
-                            <ellipse cx="72" cy="40" rx="11" ry="6.5" fill="${f}"/>`;
+    case 'floppy':  return `<ellipse cx="13" cy="36" rx="10" ry="16" fill="${f}" ${st}/>
+                            <ellipse cx="67" cy="36" rx="10" ry="16" fill="${f}" ${st}/>`;
+    case 'pointed': return `<path d="M14 34 L20 8 L38 22 Z" fill="${f}" ${st} stroke-linejoin="round"/>
+                            <path d="M66 34 L60 8 L42 22 Z" fill="${f}" ${st} stroke-linejoin="round"/>`;
+    case 'round':   return `<circle cx="19" cy="22" r="11" fill="${f}" ${st}/>
+                            <circle cx="61" cy="22" r="11" fill="${f}" ${st}/>` +
+                           (a.innerEar ? `<circle cx="19" cy="22" r="5.4" fill="${a.innerEar}"/>
+                            <circle cx="61" cy="22" r="5.4" fill="${a.innerEar}"/>` : '');
+    case 'big':     return `<circle cx="14" cy="28" r="14" fill="${f}" ${st}/>
+                            <circle cx="66" cy="28" r="14" fill="${f}" ${st}/>`;
+    case 'side':    return `<ellipse cx="8" cy="40" rx="11" ry="6.5" fill="${f}" ${st}/>
+                            <ellipse cx="72" cy="40" rx="11" ry="6.5" fill="${f}" ${st}/>`;
+    /* 고양이 — 뾰족하고 큰 삼각귀, 안쪽 색을 넣어 검은 얼굴에서도 형태가 보이게 */
+    case 'cat':     return `<path d="M11 40 L16 4 L40 21 Z" fill="${f}" ${st} stroke-linejoin="round"/>
+                            <path d="M69 40 L64 4 L40 21 Z" fill="${f}" ${st} stroke-linejoin="round"/>
+                            <path d="M18 33 L21 13 L33 22 Z" fill="${a.innerEar}"/>
+                            <path d="M62 33 L59 13 L47 22 Z" fill="${a.innerEar}"/>`;
+    case 'catRound':return `<path d="M14 34 L19 9 L40 22 Z" fill="${f}" ${st} stroke-linejoin="round"/>
+                            <path d="M66 34 L61 9 L40 22 Z" fill="${f}" ${st} stroke-linejoin="round"/>
+                            <path d="M20 30 L23 16 L33 23 Z" fill="${a.innerEar}" opacity=".85"/>
+                            <path d="M60 30 L57 16 L47 23 Z" fill="${a.innerEar}" opacity=".85"/>`;
     default:        return '';
   }
 }
@@ -1466,53 +1674,99 @@ function ears(a) {
 function animalSvg(key, size) {
   const a = ANIMALS[key] || ANIMALS.dog;
   const S = size || 40;
-  const dark = '#5A4436';
+  const dark = '#4A3A2E';
+  const lw = a.lw || 2.4;
+  const st = `stroke="${a.line}" stroke-width="${lw}"`;
   let extra = '';
 
   if (a.antler) extra += `<g stroke="#8D5C3A" stroke-width="4" stroke-linecap="round" fill="none">
       <path d="M27 22 L20 4"/><path d="M22 11 L12 10"/><path d="M20 4 L25 1"/>
       <path d="M53 22 L60 4"/><path d="M58 11 L68 10"/><path d="M60 4 L55 1"/></g>`;
-  if (a.comb) extra += `<path d="M40 12 q-8 -9 -2 -11 q4 -1 4 4 q3 -6 7 -3 q4 3 -1 8 Z" fill="#E8453C"/>`;
+  if (a.comb) extra += `<path d="M40 12 q-8 -9 -2 -11 q4 -1 4 4 q3 -6 7 -3 q4 3 -1 8 Z"
+      fill="#E8453C" stroke="#B32E27" stroke-width="1.6" stroke-linejoin="round"/>`;
 
-  let head = `<rect x="8" y="16" width="64" height="56" rx="26" fill="${a.head}"/>`;
-  if (a.wool) head += `<g fill="#FFFFFF">
+  /* 얼굴 — 통통한 캐릭터는 조금 더 둥글게 */
+  let head = a.chubby
+    ? `<rect x="6" y="15" width="68" height="58" rx="29" fill="${a.head}" ${st}/>`
+    : `<rect x="8" y="16" width="64" height="56" rx="26" fill="${a.head}" ${st}/>`;
+
+  if (a.earFront === 'floppy') head += `<ellipse cx="11" cy="29" rx="9.5" ry="15.5" fill="${a.earFill}"
+        ${st} transform="rotate(-22 11 29)"/>
+      <ellipse cx="69" cy="29" rx="9.5" ry="15.5" fill="${a.earFill}" ${st} transform="rotate(22 69 29)"/>`;
+  if (a.fuzz) head += `<g stroke="${a.line}" stroke-width="2" stroke-linecap="round" opacity=".9">
+      <path d="M13 44 l-5 -3"/><path d="M12 52 l-6 1"/><path d="M67 44 l5 -3"/><path d="M68 52 l6 1"/></g>`;
+  if (a.rim) head += `<path d="M14 34 q6 -14 26 -15" stroke="${a.rim}" stroke-width="3"
+      stroke-linecap="round" fill="none" opacity=".75"/>`;
+  if (a.wool) head += `<g fill="#FFFFFF" stroke="${a.line}" stroke-width="1.8">
       <circle cx="26" cy="24" r="10"/><circle cx="40" cy="18" r="11"/><circle cx="54" cy="24" r="10"/>
       <circle cx="20" cy="34" r="8"/><circle cx="60" cy="34" r="8"/></g>`;
-  if (a.mask) head += `<path d="M40 30 q-18 4 -18 22 q0 16 18 20 q18 -4 18 -20 q0 -18 -18 -22 Z" fill="${a.mask}"/>`;
+  if (a.mask) head += `<path d="M40 30 q-18 4 -18 22 q0 16 18 20 q18 -4 18 -20 q0 -18 -18 -22 Z"
+      fill="${a.mask}"/>`;
   if (a.patch) head += `<ellipse cx="26" cy="44" rx="9" ry="10" fill="${a.patch}"/>
                         <ellipse cx="54" cy="44" rx="9" ry="10" fill="${a.patch}"/>`;
   if (a.band) head += `<path d="M13 40 q27 -9 54 0 q-5 12 -27 12 q-22 0 -27 -12 Z" fill="#3E444A"/>`;
+  if (a.goggles) head += `<ellipse cx="27" cy="45" rx="11" ry="9.5" fill="${a.goggles}"/>
+                          <ellipse cx="53" cy="45" rx="11" ry="9.5" fill="${a.goggles}"/>`;
   if (a.stripe) head += `<g stroke="#8A4A12" stroke-width="3.6" stroke-linecap="round">
       <path d="M34 20 L31 30"/><path d="M46 20 L49 30"/><path d="M14 40 L23 42"/><path d="M66 40 L57 42"/></g>`;
   if (a.muzzle) head += `<ellipse cx="40" cy="56" rx="16" ry="12" fill="${a.muzzle}"/>`;
-  if (a.snout) head += `<ellipse cx="40" cy="54" rx="15" ry="11" fill="${a.snout}"/>
+  if (a.snout) head += `<ellipse cx="40" cy="54" rx="15" ry="11" fill="${a.snout}" ${st}/>
                         <ellipse cx="34" cy="54" rx="3" ry="4" fill="${a.nose}"/>
                         <ellipse cx="46" cy="54" rx="3" ry="4" fill="${a.nose}"/>`;
 
-  const eyeY = a.patch ? 44 : 46;
-  const onDark = !!(a.patch || a.band);
-  const eyeBase = onDark
-    ? `<circle cx="28" cy="${eyeY}" r="6.4" fill="#FDFDFD"/>
-       <circle cx="52" cy="${eyeY}" r="6.4" fill="#FDFDFD"/>` : '';
-  const eyes = eyeBase + `<circle cx="28" cy="${eyeY}" r="4.6" fill="#3A3A3A"/>
-                <circle cx="52" cy="${eyeY}" r="4.6" fill="#3A3A3A"/>
-                <circle cx="29.6" cy="${eyeY - 1.6}" r="1.7" fill="#fff"/>
-                <circle cx="53.6" cy="${eyeY - 1.6}" r="1.7" fill="#fff"/>`;
-  const cheeks = `<ellipse cx="18" cy="56" rx="5.5" ry="3.6" fill="#F2A0A6" opacity=".55"/>
-                  <ellipse cx="62" cy="56" rx="5.5" ry="3.6" fill="#F2A0A6" opacity=".55"/>`;
-
-  let face = '';
-  if (a.beak) face = `<path d="M33 54 L47 54 L40 63 Z" fill="${a.beak}"/>`;
-  else if (a.bigNose) face = `<ellipse cx="40" cy="56" rx="8" ry="10" fill="${a.nose}"/>`;
-  else if (!a.snout) {
-    face = `<ellipse cx="40" cy="55" rx="4.4" ry="3.4" fill="${a.nose}"/>
-            <path d="M40 58 q-5 5 -9 1 M40 58 q5 5 9 1" stroke="${dark}" stroke-width="2.2"
-                  stroke-linecap="round" fill="none"/>`;
+  /* ---- 눈 ---- */
+  const eyeY = (a.patch || a.goggles) ? 44 : 46;
+  let eyes;
+  if (a.eyes === 'big') {
+    // 큰 눈 — 검은 얼굴에서도 또렷하게 보입니다
+    eyes = `<g stroke="${a.line}" stroke-width="1.6">
+        <ellipse cx="27" cy="45" rx="10" ry="10.5" fill="${a.eyeFill}"/>
+        <ellipse cx="53" cy="45" rx="10" ry="10.5" fill="${a.eyeFill}"/></g>
+      <ellipse cx="27" cy="46" rx="${a.bigPupil ? 6 : 4.6}" ry="${a.bigPupil ? 7 : 6.6}" fill="#14171C"/>
+      <ellipse cx="53" cy="46" rx="${a.bigPupil ? 6 : 4.6}" ry="${a.bigPupil ? 7 : 6.6}" fill="#14171C"/>
+      <circle cx="29.4" cy="41.6" r="2.4" fill="#fff"/>
+      <circle cx="55.4" cy="41.6" r="2.4" fill="#fff"/>`;
+  } else if (a.eyes === 'dot') {
+    eyes = `<circle cx="29" cy="45" r="4.2" fill="${a.line}"/>
+            <circle cx="53" cy="45" r="4.2" fill="${a.line}"/>`;
+  } else {
+    const base = (a.patch || a.band || a.goggles)
+      ? `<circle cx="28" cy="${eyeY}" r="6.4" fill="#FDFDFD"/>
+         <circle cx="52" cy="${eyeY}" r="6.4" fill="#FDFDFD"/>` : '';
+    eyes = base + `<circle cx="28" cy="${eyeY}" r="4.6" fill="#33383F"/>
+      <circle cx="52" cy="${eyeY}" r="4.6" fill="#33383F"/>
+      <circle cx="29.6" cy="${eyeY - 1.6}" r="1.7" fill="#fff"/>
+      <circle cx="53.6" cy="${eyeY - 1.6}" r="1.7" fill="#fff"/>`;
   }
+
+  const cheeks = a.eyes === 'dot' ? ''
+    : `<ellipse cx="17" cy="57" rx="5.5" ry="3.6" fill="#F2A0A6" opacity=".5"/>
+       <ellipse cx="63" cy="57" rx="5.5" ry="3.6" fill="#F2A0A6" opacity=".5"/>`;
+
+  /* ---- 입·코 ---- */
+  let face = '';
+  if (a.beak) face = `<path d="M33 54 L47 54 L40 63 Z" fill="${a.beak}" stroke="#C96A12" stroke-width="1.4"
+                        stroke-linejoin="round"/>`;
+  else if (a.bigNose) face = `<ellipse cx="40" cy="56" rx="8" ry="10" fill="${a.nose}"/>`;
+  else if (a.simpleMouth) face = `<g stroke="${a.line}" stroke-width="${lw - 1}" fill="none" stroke-linecap="round">
+      <path d="M40 55 q-4 4 -7 0"/><path d="M40 55 q4 4 7 0"/></g>
+      <ellipse cx="40" cy="54" rx="2.6" ry="2" fill="${a.nose}"/>`;
+  else if (!a.snout) {
+    const ny = a.eyes === 'big' ? 58 : 55;
+    face = `<ellipse cx="40" cy="${ny}" rx="4.2" ry="3.2" fill="${a.nose}"/>
+            <path d="M40 ${ny + 3} q-5 5 -9 1 M40 ${ny + 3} q5 5 9 1" stroke="${a.eyes === 'big' ? a.whiskers || dark : dark}"
+                  stroke-width="2.2" stroke-linecap="round" fill="none" opacity="${a.eyes === 'big' ? '.9' : '1'}"/>`;
+  }
+  if (a.whiskers) face += `<g stroke="${a.whiskers}" stroke-width="1.6" stroke-linecap="round" opacity=".8">
+      <path d="M18 55 L4 52"/><path d="M18 59 L4 60"/>
+      <path d="M62 55 L76 52"/><path d="M62 59 L76 60"/></g>`;
   if (a.teeth) face += `<rect x="37" y="60" width="6" height="6" rx="1.6" fill="#fff" stroke="${dark}" stroke-width="1.2"/>`;
   if (a.tongue) face += `<path d="M36 60 q4 8 8 0 Z" fill="#F0808C"/>`;
 
-  return `<svg class="avatar" width="${S}" height="${S}" viewBox="0 0 80 80" aria-hidden="true">
+  /* 귀·뿔·수염은 0~80 밖으로 나가므로 viewBox 를 넉넉히 잡습니다.
+     좁게 잡으면 작은 화면에서 끝이 잘려 깨져 보입니다. */
+  return `<svg class="avatar" width="${S}" height="${S}" viewBox="-8 -8 96 96"
+    preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
     ${extra}${ears(a)}${head}${eyes}${cheeks}${face}</svg>`;
 }
 const animalName = key => (ANIMALS[key] || ANIMALS.dog).name;
@@ -1536,6 +1790,33 @@ const nl2br = s => esc(s).replace(/\n/g, '<br>');
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+/* 좁은 화면에서는 프로필·단원 목록이 위아래에 있어, 문제를 시작하면
+   문제 화면이 보이는 위치로 옮겨 줍니다. 넓은 화면에서는 아무 일도 하지 않습니다. */
+const isNarrow = () => window.matchMedia('(max-width: 860px)').matches;
+
+/* 휴대폰에서 문제 풀이만 화면 가득 띄웁니다 (넓은 화면에서는 아무 일도 하지 않습니다) */
+function soloMode(on) {
+  const want = !!on && isNarrow();
+  document.body.classList.toggle('solo', want);
+  if (want) {
+    window.scrollTo(0, 0);
+    const st = $('#stage'); if (st) st.scrollTop = 0;
+  }
+}
+window.addEventListener('resize', () => {
+  if (!isNarrow()) document.body.classList.remove('solo');
+});
+function focusStage() {
+  if (!isNarrow()) return;
+  const el = $('#stage');
+  if (!el) return;
+  requestAnimationFrame(() => {
+    const top = el.getBoundingClientRect().top + window.pageYOffset - 66;
+    try { window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' }); }
+    catch (e) { window.scrollTo(0, Math.max(top, 0)); }
+  });
+}
+
 function toast(msg) {
   const el = document.createElement('div');
   el.className = 'toast'; el.textContent = msg;
@@ -1557,7 +1838,10 @@ function renderStats() {
   $('#stAcc').textContent = acc;
   const ab = $('#adminBtn');
   if (ab) ab.classList.toggle('hidden', !IS_ADMIN);
-  $('#reviewBtn').textContent = `복습함 (${S.review.length})`;
+  const dueN = dueList().length;
+  $('#reviewBtn').textContent = dueN
+    ? `복습함 (오늘 ${dueN}${S.review.length > dueN ? ` · 대기 ${S.review.length - dueN}` : ''})`
+    : `복습함 (${S.review.length})`;
   $('#reviewBtn').disabled = S.review.length === 0;
 }
 
@@ -1565,22 +1849,55 @@ function renderStats() {
 function renderFaces() {
   if (!S) return;
   const key = myAnimal();
-  $('#tbFace').innerHTML = animalSvg(key, 30);
-  $('#meFace').innerHTML = animalSvg(key, 40);
+  $('#tbFace').innerHTML = animalSvg(key, 34);
+  $('#meFace').innerHTML = animalSvg(key, 48);
   $('#meName').textContent = S.name;
   $('#meAnimal').innerHTML = esc(animalName(key)) + ' <span class="chg">· 바꾸기</span>';
+  $('#meSince').innerHTML = sinceText();
+}
+
+/* 교육 시작일 — 「8월 15일 시작 · 12일째」 */
+function sinceText() {
+  const st = S.startedOn || todayStr();
+  const [y, m, d] = st.split('-').map(Number);
+  const ms = new Date(todayStr()) - new Date(st);
+  const nth = Math.max(1, Math.floor(ms / 86400000) + 1);
+  return `${m}월 ${d}일 시작 · <b>${nth}일째</b>`;
 }
 
 /* ---- 프로필 캐릭터 고르기 ---- */
+const AV_PER_PAGE = 8;                                   // 한 페이지 8종
+let AV_PAGE = 0;
+const avPages = () => Math.ceil(AVATAR_ORDER.length / AV_PER_PAGE);
+
 function openAvatarPicker() {
   if (!S) return;
   const cur = myAnimal();
-  $('#avGrid').innerHTML = AVATAR_ORDER.map(k => `
+  const idx = AVATAR_ORDER.indexOf(cur);
+  AV_PAGE = idx > -1 ? Math.floor(idx / AV_PER_PAGE) : 0;  // 지금 쓰는 캐릭터가 있는 쪽부터
+  renderAvatarPicker();
+  $('#avModal').classList.remove('hidden');
+}
+
+function renderAvatarPicker() {
+  const cur = myAnimal();
+  const total = avPages();
+  const list = AVATAR_ORDER.slice(AV_PAGE * AV_PER_PAGE, (AV_PAGE + 1) * AV_PER_PAGE);
+  $('#avGrid').innerHTML = list.map(k => `
     <button type="button" class="avopt" data-animal="${esc(k)}" aria-pressed="${k === cur}">
-      ${animalSvg(k, 46)}<span>${esc(animalName(k))}</span></button>`).join('');
+      ${animalSvg(k, 52)}<span>${esc(animalName(k))}</span></button>`).join('');
   $$('#avGrid .avopt').forEach(b =>
     b.addEventListener('click', () => pickAvatar(b.dataset.animal)));
-  $('#avModal').classList.remove('hidden');
+
+  $('#avNav').innerHTML = `
+    <button type="button" class="avnav" id="avPrev" ${AV_PAGE === 0 ? 'disabled' : ''}
+      aria-label="이전">‹</button>
+    <span class="avdots">${Array.from({ length: total }, (_, i) =>
+      `<i class="${i === AV_PAGE ? 'on' : ''}"></i>`).join('')}</span>
+    <button type="button" class="avnav" id="avNext" ${AV_PAGE >= total - 1 ? 'disabled' : ''}
+      aria-label="다음">›</button>`;
+  $('#avPrev').addEventListener('click', () => { if (AV_PAGE > 0) { AV_PAGE--; renderAvatarPicker(); } });
+  $('#avNext').addEventListener('click', () => { if (AV_PAGE < total - 1) { AV_PAGE++; renderAvatarPicker(); } });
 }
 function closeAvatarPicker() { $('#avModal').classList.add('hidden'); }
 function pickAvatar(key) {
@@ -1639,7 +1956,7 @@ function renderUnitList() {
     </button>`;
   }).join('');
   box.querySelectorAll('[data-unit]').forEach(b =>
-    b.addEventListener('click', () => openUnit(b.dataset.unit)));
+    b.addEventListener('click', () => { openUnit(b.dataset.unit); focusStage(); }));
 }
 
 /* ============================================================================
@@ -1685,12 +2002,29 @@ function applyTint(hex) {
   });
 }
 
+/* 단원 핵심 정리 — 문항을 풀지 않고 읽기만 해도 복습이 되도록 만든 블록.
+   open=true 면 펼친 상태로 그립니다 (정리 노트 화면용). */
+function summaryBlock(u, open) {
+  const sm = u && u.summary;
+  if (!sm || !(sm.lines || []).length) return '';
+  return `<details class="sumbox"${open ? ' open' : ''}>
+    <summary><b>핵심 정리</b><span>읽기만 해도 복습이 됩니다 · ${sm.lines.length}줄</span></summary>
+    <ul>${sm.lines.map(t => `<li>${mdBold(t)}</li>`).join('')}</ul>
+    ${sm.trap ? `<div class="sumtrap"><b>자주 틀리는 지점</b> ${mdBold(sm.trap)}</div>` : ''}
+  </details>`;
+}
+/* **강조** 만 허용하는 최소 변환 — 나머지는 모두 이스케이프합니다 */
+function mdBold(t) {
+  return esc(String(t)).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+}
+
 function paintTheme(unitId) {
   const u = BANK.units.find(x => x.id === unitId);
   applyTint((u && u.color) || '#1B3A6B');
 }
 
 function openUnit(unitId) {
+  soloMode(false);
   CUR_UNIT = unitId; RUN = null;
   paintTheme(unitId);
   renderUnitList();
@@ -1721,6 +2055,12 @@ function openUnit(unitId) {
       </div>
       ${mix ? `<div class="eyebrow" style="margin-top:16px">${esc(mix)}</div>` : ''}
       ${u.note ? `<div class="notice unit-note" style="margin-top:12px">${esc(u.note)}</div>` : ''}
+      ${summaryBlock(u, false)}
+      <div class="dash-tools" style="margin-top:12px">
+        <span class="lbl">연습 순서</span>
+        <button class="rvf" id="ordEasy" aria-pressed="${S.easyFirst !== false}">쉬운 것부터</button>
+        <button class="rvf" id="ordOrig" aria-pressed="${S.easyFirst === false}">단원 순서대로</button>
+      </div>
 
       <div class="mode-grid">
         <div class="mode-card practice">
@@ -1773,17 +2113,40 @@ function openUnit(unitId) {
   });
   const bd = $('#btnCheckDone');
   if (bd) bd.addEventListener('click', () => showCheckResult(unitId));
+  const oe = $('#ordEasy'), oo = $('#ordOrig');
+  if (oe) oe.addEventListener('click', () => {
+    S.easyFirst = true; saveState(); openUnit(unitId); toast('쉬운 문항부터 나옵니다');
+  });
+  if (oo) oo.addEventListener('click', () => {
+    S.easyFirst = false; saveState(); openUnit(unitId); toast('단원에 적힌 순서대로 나옵니다');
+  });
 }
 
 /* ============================================================================
    8. 세션 실행
    ========================================================================== */
+/* 태그 하나로 연습 세트를 만들어 바로 풀게 합니다 (최대 15문항, 쉬운 것부터) */
+function drillTag(tag) {
+  const qs = BANK.questions
+    .filter(q => q.modes.indexOf('practice') > -1 && isAuto(q) && (q.tags || []).indexOf(tag) > -1)
+    .sort((a, b) => (a.difficulty || 2) - (b.difficulty || 2))
+    .slice(0, 15);
+  if (!qs.length) { toast('해당 항목의 연습 문항이 없습니다'); return; }
+  toast(`${tag} ${qs.length}문항을 모았어요`);
+  startRun(qs[0].unit, 'practice', qs);
+}
+
 function startRun(unitId, mode, customQueue) {
   let queue = customQueue || qOfUnit(unitId, mode);
   if (mode === 'practice' && !customQueue) {
     const p = practiceProgress(unitId);
     // 다 풀었으면 전체, 아니면 안 푼 것부터
     if (p.ratio < 1) queue = queue.filter(q => !S.practice[q.id]);
+    // 쉬운 문항부터 — 난이도 3이 절반이라 순서를 그대로 두면 첫 문항부터 막힙니다.
+    // 확인 테스트는 원래 순서를 유지합니다.
+    if (S.easyFirst !== false) {
+      queue = queue.slice().sort((a, b) => (a.difficulty || 2) - (b.difficulty || 2));
+    }
   }
   if (!queue.length) { toast('풀 문항이 없습니다'); return; }
 
@@ -1793,9 +2156,11 @@ function startRun(unitId, mode, customQueue) {
     answers: {}, startedAt: Date.now(), locked: false, hintOpen: false
   };
   renderQuestion();
+  focusStage();
 }
 
 function renderQuestion() {
+  soloMode(true);
   const q = RUN.queue[RUN.i];
   const isCheck = RUN.mode === 'check';
   const u = BANK.units.find(x => x.id === RUN.unitId);
@@ -2010,11 +2375,25 @@ function commitAuto(q, score) {
     tries: (prev ? prev.tries : 0) + 1
   };
   S.xp += gained * CONFIG.XP_PER_POINT;
+
+  /* 간격 복습 — 한 번 맞혔다고 바로 지우지 않습니다.
+     틀림 → 오늘 다시 / 1번 맞힘 → 3일 뒤 / 2번 맞힘 → 7일 뒤 / 3번 맞힘 → 졸업 */
   if (score < q.maxScore) {
     if (!S.review.includes(q.id)) S.review.push(q.id);
+    S.reps[q.id] = 0;
+    S.due[q.id] = todayStr();
     if (CONFIG.HEARTS) RUN.hearts--;
-  } else {
-    S.review = S.review.filter(x => x !== q.id);
+  } else if (S.review.includes(q.id)) {
+    const r = (S.reps[q.id] || 0) + 1;
+    if (r >= 3) {
+      S.review = S.review.filter(x => x !== q.id);
+      delete S.due[q.id]; delete S.reps[q.id];
+      toast('복습 완료 — 복습함에서 정리했어요');
+    } else {
+      S.reps[q.id] = r;
+      S.due[q.id] = addDays(todayStr(), r === 1 ? 3 : 7);
+      toast(r === 1 ? '3일 뒤에 한 번 더 확인합니다' : '7일 뒤에 마지막으로 확인합니다');
+    }
   }
   bumpStreak();
   saveState();
@@ -2159,8 +2538,10 @@ async function finishRun() {
         <div><div class="v mono">${fmtTime(elapsed)}</div><div class="k">소요 시간</div></div>
       </div>
       ${weak.length
-        ? `<div class="notice bad" style="margin-bottom:16px"><b>다시 볼 항목</b> —
-             ${weak.map(([t, v]) => `${esc(t)} ${Math.round(v.got / v.max * 100)}%`).join(' · ')}</div>`
+        ? `<div class="notice bad" style="margin-bottom:16px"><b>다시 볼 항목</b>
+             <div class="weaklist">${weak.map(([t, v]) =>
+               `<button class="tagdrill" data-tag="${esc(t)}">${esc(t)} ${Math.round(v.got / v.max * 100)}% · 연습</button>`
+             ).join('')}</div></div>`
         : `<div class="notice good" style="margin-bottom:16px"><b>모든 항목이 70% 이상입니다.</b></div>`}
       ${renderTagProfile(queue, answers)}
       ${via === 'download'
@@ -2194,8 +2575,10 @@ function showCheckResult(unitId) {
         <div><div class="v mono">${last.auto.got} / ${last.auto.max}</div><div class="k">마지막 점수</div></div>
       </div>
       ${weak.length
-        ? `<div class="notice bad" style="margin-bottom:16px"><b>마지막 응시에서 약했던 항목</b> —
-             ${weak.map(([t, v]) => `${esc(t)} ${Math.round(v.got / v.max * 100)}%`).join(' · ')}</div>`
+        ? `<div class="notice bad" style="margin-bottom:16px"><b>마지막 응시에서 약했던 항목</b>
+             <div class="weaklist">${weak.map(([t, v]) =>
+               `<button class="tagdrill" data-tag="${esc(t)}">${esc(t)} ${Math.round(v.got / v.max * 100)}% · 연습</button>`
+             ).join('')}</div></div>`
         : '<div class="notice good" style="margin-bottom:16px"><b>마지막 응시는 모든 항목이 70% 이상이었습니다.</b></div>'}
       <div class="foot">
         <button class="btn quiet sm" id="againBtn" style="margin-top:0">다시 풀기</button>
@@ -2232,10 +2615,13 @@ function renderTagProfile(queue, answers) {
     ${rows.map(([t, v]) => {
       const pc = Math.round(v.got / v.max * 100);
       const col = pc >= 85 ? 'var(--s3)' : pc >= 60 ? 'var(--s2)' : pc >= 35 ? 'var(--s1)' : 'var(--s0)';
-      return `<div class="tagrow">
+      const weakCls = pc < 70 ? ' weak' : '';
+      return `<div class="tagrow${weakCls}">
         <span class="nm">${esc(t)}</span>
         <span class="tr"><i style="width:${pc}%;background:${col}"></i></span>
-        <span class="pc mono">${pc}%</span></div>`;
+        <span class="pc mono">${pc}%</span>
+        ${pc < 70 ? `<button class="tagdrill" data-tag="${esc(t)}">이 항목만 연습</button>` : ''}
+      </div>`;
     }).join('')}
   </div>`;
 }
@@ -2301,7 +2687,7 @@ function renderReflectPanel(unitId) {
     </div>`;
 
   const on = (id, fn) => { const el = $(id); if (el) el.addEventListener('click', fn); };
-  on('#refStart', () => startReflect(unitId, 1));
+  on('#refStart', () => { startReflect(unitId, 1); focusStage(); });
   on('#refAgain', () => {
     if (confirm(`${round + 1}차로 다시 씁니다. 이전에 쓴 답은 그대로 보관돼요.`))
       startReflect(unitId, round + 1);
@@ -2311,6 +2697,7 @@ function renderReflectPanel(unitId) {
 }
 
 function startReflect(unitId, round) {
+  soloMode(true);
   const qs = reflectQs(unitId);
   // 미완성 회차라면 이어서. 아직 안 쓴 첫 문항으로 이동
   const drafts = {};
@@ -2573,12 +2960,13 @@ function renderWorkPanel(unitId) {
     </div>`;
 
   const on = (id, fn) => { const el = $(id); if (el) el.addEventListener('click', fn); };
-  on('#wkStart', () => { WRK = { unitId, i: 0 }; renderWorkEntry(); });
+  on('#wkStart', () => { WRK = { unitId, i: 0 }; renderWorkEntry(); focusStage(); });
   on('#wkReview', () => reviewWork(unitId));
   on('#wkView', () => reviewWork(unitId));
 }
 
 function renderWorkEntry() {
+  soloMode(true);
   const { unitId, i } = WRK;
   const u = BANK.units.find(x => x.id === unitId);
   const qs = workQs(unitId);
@@ -2831,6 +3219,7 @@ let DASH_VIEW = 'people';  // people | units
 let DASH_SCOPE = 'target'; // target | all
 
 async function openDashboard() {
+  soloMode(false);
   if (!IS_ADMIN) return;
   if (!CONFIG.SYNC_URL) { toast('서버가 연결되어 있지 않아 진행 확인을 볼 수 없어요'); return; }
   CUR_UNIT = null; renderUnitList();
@@ -2915,7 +3304,7 @@ function renderDashboard() {
   const body = DASH_VIEW === 'people' ? (rows.length ? rows.map(({ p, s }) => {
     const key = personAnimal(p);
     return `<div class="prow ${s.done === 0 ? 'idle' : ''}">
-      <div class="who">${animalSvg(key, 30)}<span class="nm">${esc(p.name)}</span>${
+      <div class="who">${animalSvg(key, 34)}<span class="nm">${esc(p.name)}</span>${
         p.target ? '<span class="tg">교육 대상</span>' : ''}</div>
       <div class="pbars">
         <div class="pbar">
@@ -3019,8 +3408,10 @@ function renderDashboard() {
    10. 복습함
    ========================================================================== */
 let REVIEW_FILTER = 'all';
+let REVIEW_SCOPE = 'due';   // due | later | all
 
 function openReview() {
+  soloMode(false);
   const all = S.review.map(id => BANK.questions.find(q => q.id === id)).filter(Boolean);
   if (!all.length) { toast('복습할 문항이 없습니다'); return; }
   CUR_UNIT = null; renderUnitList();
@@ -3044,7 +3435,14 @@ function renderReviewBox(all) {
   const units = BANK.units.filter(u => counts[u.id]);
   if (REVIEW_FILTER !== 'all' && !counts[REVIEW_FILTER]) REVIEW_FILTER = 'all';
 
-  const shown = REVIEW_FILTER === 'all' ? all : all.filter(q => q.unit === REVIEW_FILTER);
+  const today = todayStr();
+  const isDue = q => (S.due[q.id] || today) <= today;
+  const dueN = all.filter(isDue).length;
+  let scoped = all;
+  if (REVIEW_SCOPE === 'due') scoped = all.filter(isDue);
+  else if (REVIEW_SCOPE === 'later') scoped = all.filter(q => !isDue(q));
+  if (!scoped.length) { REVIEW_SCOPE = 'all'; scoped = all; }
+  const shown = REVIEW_FILTER === 'all' ? scoped : scoped.filter(q => q.unit === REVIEW_FILTER);
   const cur = BANK.units.find(u => u.id === REVIEW_FILTER);
 
   const chips = [`<button class="rvf" data-f="all" aria-pressed="${REVIEW_FILTER === 'all'}">
@@ -3063,6 +3461,13 @@ function renderReviewBox(all) {
         <span class="score-chip sc-${Math.min(got, 3)}" style="margin-top:0">${got}/${q.maxScore}</span>
         <span class="rv-unit">${esc((u && u.icon) || '')} ${esc((u && u.title) || '')}</span>
         <span class="spacer"></span>
+        ${(() => {
+          const dd = S.due[q.id];
+          if (!dd || dd <= todayStr()) return '<span class="rv-due now">오늘 다시</span>';
+          const [, m, day] = dd.split('-');
+          const rep = S.reps[q.id] || 0;
+          return `<span class="rv-due">${Number(m)}/${Number(day)} 재확인${rep ? ` · ${rep}회 맞힘` : ''}</span>`;
+        })()}
         <span class="meta mono">${TYPE_LABEL[q.type]}</span>
       </div>
       <div class="rv-q">${esc(q.prompt.slice(0, 90))}${q.prompt.length > 90 ? '…' : ''}</div>
@@ -3071,6 +3476,12 @@ function renderReviewBox(all) {
         <span class="spacer"></span>
         <button class="rv-one" data-run="${esc(q.id)}">이 문항만 풀기</button>
         <button class="rv-ok" data-ok="${esc(q.id)}">이해했어요</button>
+      </div>
+      <div class="rv-note">
+        <label for="nt-${esc(q.id)}">왜 틀렸나요 <span>— 한 줄이면 충분합니다. 기록에 저장됩니다</span></label>
+        <textarea id="nt-${esc(q.id)}" data-note="${esc(q.id)}" rows="2"
+          placeholder="예: 기준을 결제일로 착각했다 / 승인 전에 안내해도 된다고 생각했다"
+          >${esc(S.notes[q.id] || '')}</textarea>
       </div>
     </div>`;
   }).join('');
@@ -3084,6 +3495,14 @@ function renderReviewBox(all) {
         틀린 문항과 차선을 고른 문항이 함께 담깁니다. 다시 풀어 만점을 받으면 자동으로 빠지고,
         이미 이해한 문항은 <b>이해했어요</b>로 직접 정리할 수 있어요.</p>
 
+      <div class="dash-tools" style="margin-bottom:12px">
+        <span class="lbl">언제</span>
+        <button class="rvf" data-sc="due" aria-pressed="${REVIEW_SCOPE === 'due'}"
+          ${dueN ? '' : 'disabled'}>오늘 다시 볼 것 <i class="mono">${dueN}</i></button>
+        <button class="rvf" data-sc="later" aria-pressed="${REVIEW_SCOPE === 'later'}"
+          ${all.length - dueN ? '' : 'disabled'}>예약됨 <i class="mono">${all.length - dueN}</i></button>
+        <button class="rvf" data-sc="all" aria-pressed="${REVIEW_SCOPE === 'all'}">전체</button>
+      </div>
       <div class="rvfilters">${chips}</div>
       <div class="rv-list">${rows}</div>
 
@@ -3101,6 +3520,7 @@ function renderReviewBox(all) {
     renderReviewBox(S.review.map(id => BANK.questions.find(q => q.id === id)).filter(Boolean));
   }));
   $$('.rv-ok').forEach(b => b.addEventListener('click', () => {
+    delete S.due[b.dataset.ok]; delete S.reps[b.dataset.ok];
     S.review = S.review.filter(x => x !== b.dataset.ok);
     saveState(); renderStats();
     renderReviewBox(S.review.map(id => BANK.questions.find(q => q.id === id)).filter(Boolean));
@@ -3110,10 +3530,148 @@ function renderReviewBox(all) {
     const q = BANK.questions.find(x => x.id === b.dataset.run);
     if (q) startRun(q.unit, 'practice', [q]);
   }));
+  $$('.rvf[data-sc]').forEach(b => b.addEventListener('click', () => {
+    REVIEW_SCOPE = b.dataset.sc;
+    renderReviewBox(S.review.map(id => BANK.questions.find(q => q.id === id)).filter(Boolean));
+  }));
+  /* 오답 메모 — 입력창을 벗어나면 저장합니다 */
+  $$('textarea[data-note]').forEach(t => t.addEventListener('blur', () => {
+    const id = t.dataset.note, v = t.value.trim();
+    if (v) S.notes[id] = v; else delete S.notes[id];
+    saveState();
+  }));
   $('#rvBack').addEventListener('click', () => openUnit(BANK.units[0].id));
   $('#reviewRun').addEventListener('click', () => {
     if (shown.length) startRun(shown[0].unit, 'practice', shown);
   });
+}
+
+/* ============================================================================
+   정리 노트 · 검색 — 문항을 풀지 않고 찾아보고 읽는 화면.
+   실무 중 "그 기준이 뭐였지" 를 해결하는 용도이자, 복습의 절반입니다.
+   ========================================================================== */
+let NOTE_Q = '';
+
+function openNotes() {
+  soloMode(false);
+  CUR_UNIT = null; RUN = null;
+  renderUnitList();
+  renderNotes();
+}
+
+function searchBank(kw) {
+  const t = kw.trim().toLowerCase();
+  if (t.length < 2) return [];
+  const hit = q => [q.prompt, q.explain, q.context, (q.tags || []).join(' '),
+                    (q.choices || []).map(c => c.text + ' ' + (c.why || '')).join(' ')]
+    .filter(Boolean).join(' ').toLowerCase().indexOf(t) > -1;
+  return BANK.questions.filter(q => q.modes.length && hit(q)).slice(0, 40);
+}
+
+function renderNotes() {
+  const hits = searchBank(NOTE_Q);
+  const myNotes = Object.keys(S.notes || {})
+    .map(id => ({ id, text: S.notes[id], q: BANK.questions.find(x => x.id === id) }))
+    .filter(x => x.q);
+
+  const results = NOTE_Q.trim().length >= 2 ? `
+    <div class="notice" style="margin:14px 0">
+      <b>「${esc(NOTE_Q)}」 검색 결과 ${hits.length}건</b>${hits.length >= 40 ? ' (상위 40건)' : ''}
+    </div>
+    ${hits.length ? hits.map(q => {
+      const u = BANK.units.find(x => x.id === q.unit);
+      return `<div class="srch-card">
+        <div class="srch-top">
+          <span class="rv-unit">${esc((u && u.icon) || '')} ${esc((u && u.title) || '')}</span>
+          <span class="spacer"></span>
+          <span class="meta mono">${TYPE_LABEL[q.type]}</span>
+        </div>
+        <div class="srch-q">${esc(q.prompt)}</div>
+        ${q.explain ? `<div class="srch-ex">${esc(q.explain)}</div>` : ''}
+        <div class="srch-foot">
+          <span class="rv-tags">${esc((q.tags || []).join(' · '))}</span>
+          <span class="spacer"></span>
+          <button class="rv-one" data-run="${esc(q.id)}">이 문항 풀기</button>
+        </div>
+      </div>`;
+    }).join('') : `<div class="empty"><span class="ic">🔍</span>
+        <p>일치하는 내용이 없습니다</p><small>다른 단어로 찾아보세요</small></div>`}` : '';
+
+  $('#stage').innerHTML = `
+    <div class="panel" style="${tintStyle('#2E5C99')}">
+      <span class="eyebrow tinted">정리 노트</span>
+      <h2 style="font-size:23px;font-weight:800;letter-spacing:-.035em;margin:3px 0 6px">
+        읽고 찾아보는 정리</h2>
+      <p style="color:var(--muted);font-size:14px;margin:0">
+        단원별 핵심 정리와 내가 남긴 오답 메모를 모았습니다. 실무 중에 기준을 확인하고 싶을 때
+        검색으로 바로 찾을 수 있습니다.</p>
+
+      <div class="srch-wrap">
+        <input id="noteSearch" type="search" placeholder="예: 휴원, 계산일, 환급, 명령지, Filter"
+          value="${esc(NOTE_Q)}" autocomplete="off">
+        <button class="btn sm unit" id="noteGo" style="margin-top:0">찾기</button>
+      </div>
+      ${results}
+
+      ${myNotes.length ? `
+        <div class="eyebrow" style="margin:22px 0 8px">내 오답 메모 ${myNotes.length}개</div>
+        ${myNotes.map(({ id, text, q }) => {
+          const u = BANK.units.find(x => x.id === q.unit);
+          return `<div class="srch-card mine">
+            <div class="srch-top">
+              <span class="rv-unit">${esc((u && u.icon) || '')} ${esc((u && u.title) || '')}</span>
+              <span class="spacer"></span>
+              <button class="rv-one" data-run="${esc(id)}">다시 풀기</button>
+            </div>
+            <div class="srch-q">${esc(q.prompt.slice(0, 90))}${q.prompt.length > 90 ? '…' : ''}</div>
+            <div class="mynote">${esc(text)}</div>
+          </div>`;
+        }).join('')}` : ''}
+
+      <div class="eyebrow" style="margin:22px 0 8px">단원별 핵심 정리</div>
+      ${BANK.units.map(u => `<div class="sumwrap" style="${tintStyle(u.color)}">
+        <div class="sumtitle">${esc(u.icon || '')} ${esc(u.title)}</div>
+        ${summaryBlock(u, false)}
+      </div>`).join('')}
+
+      <div class="foot"><button class="btn quiet sm" id="ntBack" style="margin-top:0">단원 목록으로</button></div>
+    </div>`;
+
+  const go = () => { NOTE_Q = $('#noteSearch').value; renderNotes(); $('#noteSearch').focus(); };
+  $('#noteGo').addEventListener('click', go);
+  $('#noteSearch').addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+  $$('.rv-one').forEach(b => b.addEventListener('click', () => {
+    const q = BANK.questions.find(x => x.id === b.dataset.run);
+    if (q) startRun(q.unit, 'practice', [q]);
+  }));
+  $('#ntBack').addEventListener('click', () => openUnit(BANK.units[0].id));
+}
+
+/* ============================================================================
+   오늘의 학습 — 재확인 예정 문항 + 아직 풀지 않은 문항을 섞어 12문항.
+   매일 열 이유를 만들고, 복습이 쌓이지 않게 합니다.
+   ========================================================================== */
+function startToday() {
+  const N = 12;
+  const due = dueList()
+    .map(id => BANK.questions.find(q => q.id === id))
+    .filter(q => q && isAuto(q));
+  const fresh = BANK.questions
+    .filter(q => q.modes.indexOf('practice') > -1 && isAuto(q) && !S.practice[q.id])
+    .sort((a, b) => (a.difficulty || 2) - (b.difficulty || 2));
+
+  const queue = due.slice(0, N);
+  for (const q of fresh) {
+    if (queue.length >= N) break;
+    if (!queue.some(x => x.id === q.id)) queue.push(q);
+  }
+  if (!queue.length) {
+    toast('오늘 볼 문항이 없습니다 — 모두 정리했어요');
+    return;
+  }
+  const dueN = Math.min(due.length, N);
+  toast(dueN ? `복습 ${dueN} + 새 문항 ${queue.length - dueN}문항` : `새 문항 ${queue.length}문항`);
+  startRun(queue[0].unit, 'practice', queue);
 }
 
 /* ============================================================================
@@ -3233,6 +3791,12 @@ async function boot(name) {
   st.sent = st.sent || {};
   // 옛 기록이거나 없는 캐릭터가 저장돼 있으면 이름 배정값으로 되돌립니다
   st.avatar = (st.avatar && ANIMALS[st.avatar]) ? st.avatar : null;
+  st.notes = st.notes || {};
+  st.due = st.due || {};
+  st.reps = st.reps || {};
+  if (typeof st.easyFirst !== 'boolean') st.easyFirst = true;
+  // 옛 기록에는 시작일이 없으므로 첫 학습일(없으면 오늘)로 채웁니다
+  if (!st.startedOn) st.startedOn = (st.days && st.days.length ? st.days.slice().sort()[0] : todayStr());
   if (typeof st.reflectSent === 'string' && st.reflectSent) {   // 옛 형식 이관
     st.sent.reflect = st.reflectSent;
   }
@@ -3331,6 +3895,8 @@ $('#logoutBtn').addEventListener('click', () => {
   location.reload();
 });
 $('#reviewBtn').addEventListener('click', openReview);
+$('#todayBtn').addEventListener('click', startToday);
+$('#noteBtn').addEventListener('click', openNotes);
 $('#adminBtn').addEventListener('click', openDashboard);
 $('#meFace').addEventListener('click', openAvatarPicker);
 $('#avClose').addEventListener('click', closeAvatarPicker);
@@ -3339,6 +3905,12 @@ $('#avModal').addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && !$('#avModal').classList.contains('hidden')) closeAvatarPicker();
+});
+
+/* 결과 화면의 「이 항목만 연습」 — 화면이 다시 그려져도 동작하도록 위임 처리 */
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('.tagdrill');
+  if (b && b.dataset.tag) { e.preventDefault(); drillTag(b.dataset.tag); }
 });
 
 (async () => {
