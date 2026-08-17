@@ -3441,7 +3441,6 @@ function renderReviewBox(all) {
   let scoped = all;
   if (REVIEW_SCOPE === 'due') scoped = all.filter(isDue);
   else if (REVIEW_SCOPE === 'later') scoped = all.filter(q => !isDue(q));
-  if (!scoped.length) { REVIEW_SCOPE = 'all'; scoped = all; }
   const shown = REVIEW_FILTER === 'all' ? scoped : scoped.filter(q => q.unit === REVIEW_FILTER);
   const cur = BANK.units.find(u => u.id === REVIEW_FILTER);
 
@@ -3498,13 +3497,19 @@ function renderReviewBox(all) {
       <div class="dash-tools" style="margin-bottom:12px">
         <span class="lbl">언제</span>
         <button class="rvf" data-sc="due" aria-pressed="${REVIEW_SCOPE === 'due'}"
-          ${dueN ? '' : 'disabled'}>오늘 다시 볼 것 <i class="mono">${dueN}</i></button>
+          ${dueN || REVIEW_SCOPE === 'due' ? '' : 'disabled'}>오늘 다시 볼 것 <i class="mono">${dueN}</i></button>
         <button class="rvf" data-sc="later" aria-pressed="${REVIEW_SCOPE === 'later'}"
-          ${all.length - dueN ? '' : 'disabled'}>예약됨 <i class="mono">${all.length - dueN}</i></button>
+          ${(all.length - dueN) || REVIEW_SCOPE === 'later' ? '' : 'disabled'}>예약됨 <i class="mono">${all.length - dueN}</i></button>
         <button class="rvf" data-sc="all" aria-pressed="${REVIEW_SCOPE === 'all'}">전체</button>
       </div>
       <div class="rvfilters">${chips}</div>
-      <div class="rv-list">${rows}</div>
+      ${shown.length ? `<div class="rv-list">${rows}</div>`
+        : `<div class="empty"><span class="ic">🗓️</span>
+            <p>${REVIEW_SCOPE === 'later' ? '예약된 문항이 없습니다' : '오늘 다시 볼 문항이 없습니다'}</p>
+            <small>${REVIEW_SCOPE === 'later'
+              ? '한 번 맞힌 문항이 생기면 3일 뒤·7일 뒤 재확인으로 여기에 예약됩니다.'
+              : '오늘 볼 것은 모두 마쳤어요. 예약된 문항은 정해진 날에 다시 올라옵니다.'}</small>
+          </div>`}
 
       <div class="foot" style="flex-wrap:wrap;gap:8px">
         <button class="btn quiet sm" id="rvBack" style="margin-top:0">단원 목록으로</button>
@@ -3515,7 +3520,7 @@ function renderReviewBox(all) {
       </div>
     </div>`;
 
-  $$('.rvf').forEach(b => b.addEventListener('click', () => {
+  $$('.rvf[data-f]').forEach(b => b.addEventListener('click', () => {
     REVIEW_FILTER = b.dataset.f;
     renderReviewBox(S.review.map(id => BANK.questions.find(q => q.id === id)).filter(Boolean));
   }));
@@ -3532,6 +3537,7 @@ function renderReviewBox(all) {
   }));
   $$('.rvf[data-sc]').forEach(b => b.addEventListener('click', () => {
     REVIEW_SCOPE = b.dataset.sc;
+    REVIEW_FILTER = 'all';   // 단원 필터가 걸려 있으면 결과가 0건이라 안 바뀐 것처럼 보입니다
     renderReviewBox(S.review.map(id => BANK.questions.find(q => q.id === id)).filter(Boolean));
   }));
   /* 오답 메모 — 입력창을 벗어나면 저장합니다 */
